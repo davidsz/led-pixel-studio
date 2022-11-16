@@ -1,14 +1,18 @@
-function TimelineTrackItem({ width }) {
+function TimelineTrackItem({ itemData, dndProvided, dndSnapshot }) {
     return (
         <div
+            ref={dndProvided.innerRef}
+            {...dndProvided.draggableProps}
+            {...dndProvided.dragHandleProps}
             style={{
                 display: "inline-block",
-                width: width,
+                width: itemData.width,
                 height: "64px",
                 marginRight: "3px",
                 backgroundColor: "gray",
+                ...dndProvided.draggableProps.style,
             }}>
-            Wee
+            {itemData.id}
         </div>
     );
 }

@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useState } from "react";
 import { styled, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import MuiDrawer from "@mui/material/Drawer";
@@ -14,9 +14,8 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
-import DrawerMenuitem from "./Components/DrawerMenuItem";
-import TimelineTrack from "./Components/TimelineTrack";
-import TimelineTrackItem from "./Components/TimelineTrackItem";
+import DrawerMenuitem from "./components/DrawerMenuItem";
+import TimelineTrack from "./components/TimelineTrack";
 
 const drawerWidth = 240;
 
@@ -85,7 +84,21 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== "open" 
 
 function App() {
     const theme = useTheme();
-    const [drawerOpen, setDrawerOpen] = React.useState(false);
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const [images, setImages] = useState([
+        {
+            id: "0",
+            width: "100px",
+        },
+        {
+            id: "1",
+            width: "200px",
+        }, 
+        {
+            id: "2",
+            width: "300px",
+        }, 
+    ]);
 
     const handleDrawerOpen = () => {
         setDrawerOpen(true);
@@ -140,50 +153,8 @@ function App() {
             </Drawer>
             <Box component="main" sx={{ flexGrow: 1, p: 3, height: "100vh" }}>
                 <DrawerHeader />
-                <div style={{ flexDirection: "row", p: 0, marginBottom: "15px", width: "100%", backgroundColor: "silver" }}>
-                    <div
-                        style={{
-                            display: "inline-block",
-                            width: "100px",
-                            height: "64px",
-                            margin: "10px",
-                            backgroundColor: "gray",
-                        }}>
-                        wee
-                    </div>
-                    <div
-                        style={{
-                            display: "inline-block",
-                            width: "100px",
-                            height: "64px",
-                            margin: "10px",
-                            backgroundColor: "gray",
-                        }}>
-                        wee
-                    </div>
-                    <div
-                        style={{
-                            display: "inline-block",
-                            width: "100px",
-                            height: "64px",
-                            margin: "10px",
-                            backgroundColor: "gray",
-                        }}>
-                        wee
-                    </div>
-                </div>
-
-                <hr />
-
-                <TimelineTrack>
-                    <TimelineTrackItem width="350px"></TimelineTrackItem>
-                    <TimelineTrackItem width="180px"></TimelineTrackItem>
-                </TimelineTrack>
-                <TimelineTrack>
-                    <TimelineTrackItem width="100px"></TimelineTrackItem>
-                    <TimelineTrackItem width="100px"></TimelineTrackItem>
-                    <TimelineTrackItem width="100px"></TimelineTrackItem>
-                </TimelineTrack>
+                
+                <TimelineTrack items={images} setItems={setImages} />
             </Box>
         </Box>
     );
