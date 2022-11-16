@@ -85,19 +85,29 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== "open" 
 function App() {
     const theme = useTheme();
     const [drawerOpen, setDrawerOpen] = useState(false);
-    const [images, setImages] = useState([
+    const [music, setMusic] = useState([
         {
             id: "0",
-            width: "100px",
+            width: 400,
         },
         {
             id: "1",
-            width: "200px",
-        }, 
+            width: 200,
+        },
+    ]);
+    const [images, setImages] = useState([
+        {
+            id: "0",
+            width: 100,
+        },
+        {
+            id: "1",
+            width: 200,
+        },
         {
             id: "2",
-            width: "300px",
-        }, 
+            width: 300,
+        },
     ]);
 
     const handleDrawerOpen = () => {
@@ -153,7 +163,8 @@ function App() {
             </Drawer>
             <Box component="main" sx={{ flexGrow: 1, p: 3, height: "100vh" }}>
                 <DrawerHeader />
-                
+
+                <TimelineTrack items={music} setItems={setMusic} />
                 <TimelineTrack items={images} setItems={setImages} />
             </Box>
         </Box>

@@ -6,7 +6,7 @@ function TimelineTrackItem({ itemData, dndProvided, dndSnapshot }) {
             {...dndProvided.dragHandleProps}
             style={{
                 display: "inline-block",
-                width: itemData.width,
+                width: `${itemData.width}px`,
                 height: "64px",
                 marginRight: "3px",
                 backgroundColor: "gray",
