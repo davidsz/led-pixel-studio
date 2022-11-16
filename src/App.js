@@ -12,12 +12,11 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
+import DrawerMenuitem from "./Components/DrawerMenuItem";
+import TimelineTrack from "./Components/TimelineTrack";
+import TimelineTrackItem from "./Components/TimelineTrackItem";
 
 const drawerWidth = 240;
 
@@ -86,20 +85,20 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== "open" 
 
 function App() {
     const theme = useTheme();
-    const [open, setOpen] = React.useState(false);
+    const [drawerOpen, setDrawerOpen] = React.useState(false);
 
     const handleDrawerOpen = () => {
-        setOpen(true);
+        setDrawerOpen(true);
     };
 
     const handleDrawerClose = () => {
-        setOpen(false);
+        setDrawerOpen(false);
     };
 
     return (
         <Box sx={{ display: "flex" }}>
             <CssBaseline />
-            <AppBar position="fixed" open={open}>
+            <AppBar position="fixed" open={drawerOpen}>
                 <Toolbar>
                     <IconButton
                         color="inherit"
@@ -108,16 +107,16 @@ function App() {
                         edge="start"
                         sx={{
                             marginRight: 5,
-                            ...(open && { display: "none" }),
+                            ...(drawerOpen && { display: "none" }),
                         }}>
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" noWrap component="div">
-                        Mini variant drawer
+                        LED Pixel Studio
                     </Typography>
                 </Toolbar>
             </AppBar>
-            <Drawer variant="permanent" open={open}>
+            <Drawer variant="permanent" open={drawerOpen}>
                 <DrawerHeader>
                     <IconButton onClick={handleDrawerClose}>
                         {theme.direction === "rtl" ? <ChevronRightIcon /> : <ChevronLeftIcon />}
@@ -125,96 +124,66 @@ function App() {
                 </DrawerHeader>
                 <Divider />
                 <List>
-                    {["Load project", "Save project", "Clear"].map((text, index) => (
-                        <ListItem key={text} disablePadding sx={{ display: "block" }}>
-                            <ListItemButton
-                                sx={{
-                                    minHeight: 48,
-                                    justifyContent: open ? "initial" : "center",
-                                    px: 2.5,
-                                }}>
-                                <ListItemIcon
-                                    sx={{
-                                        minWidth: 0,
-                                        mr: open ? 3 : "auto",
-                                        justifyContent: "center",
-                                    }}>
-                                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                                </ListItemIcon>
-                                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-                            </ListItemButton>
-                        </ListItem>
-                    ))}
+                    <DrawerMenuitem open={drawerOpen} text={"Load project"} icon={<InboxIcon />} />
+                    <DrawerMenuitem open={drawerOpen} text={"Save project"} icon={<InboxIcon />} />
+                    <DrawerMenuitem open={drawerOpen} text={"Clear"} icon={<InboxIcon />} />
                 </List>
                 <Divider />
                 <List>
-                    {["Pictures", "Music"].map((text, index) => (
-                        <ListItem key={text} disablePadding sx={{ display: "block" }}>
-                            <ListItemButton
-                                sx={{
-                                    minHeight: 48,
-                                    justifyContent: open ? "initial" : "center",
-                                    px: 2.5,
-                                }}>
-                                <ListItemIcon
-                                    sx={{
-                                        minWidth: 0,
-                                        mr: open ? 3 : "auto",
-                                        justifyContent: "center",
-                                    }}>
-                                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                                </ListItemIcon>
-                                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-                            </ListItemButton>
-                        </ListItem>
-                    ))}
+                    <DrawerMenuitem open={drawerOpen} text={"Pictures"} icon={<MailIcon />} />
+                    <DrawerMenuitem open={drawerOpen} text={"Music"} icon={<MailIcon />} />
                 </List>
                 <Divider />
                 <List>
-                    {["Homepage"].map((text, index) => (
-                        <ListItem key={text} disablePadding sx={{ display: "block" }}>
-                            <ListItemButton
-                                sx={{
-                                    minHeight: 48,
-                                    justifyContent: open ? "initial" : "center",
-                                    px: 2.5,
-                                }}>
-                                <ListItemIcon
-                                    sx={{
-                                        minWidth: 0,
-                                        mr: open ? 3 : "auto",
-                                        justifyContent: "center",
-                                    }}>
-                                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                                </ListItemIcon>
-                                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-                            </ListItemButton>
-                        </ListItem>
-                    ))}
+                    <DrawerMenuitem open={drawerOpen} text={"Homepage"} icon={<InboxIcon />} />
                 </List>
             </Drawer>
-            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+            <Box component="main" sx={{ flexGrow: 1, p: 3, height: "100vh" }}>
                 <DrawerHeader />
-                <Typography paragraph>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-                    magna aliqua. Rhoncus dolor purus non enim praesent elementum facilisis leo vel. Risus at ultrices mi tempus
-                    imperdiet. Semper risus in hendrerit gravida rutrum quisque non tellus. Convallis convallis tellus id interdum
-                    velit laoreet id donec ultrices. Odio morbi quis commodo odio aenean sed adipiscing. Amet nisl suscipit
-                    adipiscing bibendum est ultricies integer quis. Cursus euismod quis viverra nibh cras. Metus vulputate eu
-                    scelerisque felis imperdiet proin fermentum leo. Mauris commodo quis imperdiet massa tincidunt. Cras tincidunt
-                    lobortis feugiat vivamus at augue. At augue eget arcu dictum varius duis at consectetur lorem. Velit sed
-                    ullamcorper morbi tincidunt. Lorem donec massa sapien faucibus et molestie ac.
-                </Typography>
-                <Typography paragraph>
-                    Consequat mauris nunc congue nisi vitae suscipit. Fringilla est ullamcorper eget nulla facilisi etiam
-                    dignissim diam. Pulvinar elementum integer enim neque volutpat ac tincidunt. Ornare suspendisse sed nisi lacus
-                    sed viverra tellus. Purus sit amet volutpat consequat mauris. Elementum eu facilisis sed odio morbi. Euismod
-                    lacinia at quis risus sed vulputate odio. Morbi tincidunt ornare massa eget egestas purus viverra accumsan in.
-                    In hendrerit gravida rutrum quisque non tellus orci ac. Pellentesque nec nam aliquam sem et tortor. Habitant
-                    morbi tristique senectus et. Adipiscing elit duis tristique sollicitudin nibh sit. Ornare aenean euismod
-                    elementum nisi quis eleifend. Commodo viverra maecenas accumsan lacus vel facilisis. Nulla posuere
-                    sollicitudin aliquam ultrices sagittis orci a.
-                </Typography>
+                <div style={{ flexDirection: "row", p: 0, marginBottom: "15px", width: "100%", backgroundColor: "silver" }}>
+                    <div
+                        style={{
+                            display: "inline-block",
+                            width: "100px",
+                            height: "64px",
+                            margin: "10px",
+                            backgroundColor: "gray",
+                        }}>
+                        wee
+                    </div>
+                    <div
+                        style={{
+                            display: "inline-block",
+                            width: "100px",
+                            height: "64px",
+                            margin: "10px",
+                            backgroundColor: "gray",
+                        }}>
+                        wee
+                    </div>
+                    <div
+                        style={{
+                            display: "inline-block",
+                            width: "100px",
+                            height: "64px",
+                            margin: "10px",
+                            backgroundColor: "gray",
+                        }}>
+                        wee
+                    </div>
+                </div>
+
+                <hr />
+
+                <TimelineTrack>
+                    <TimelineTrackItem width="350px"></TimelineTrackItem>
+                    <TimelineTrackItem width="180px"></TimelineTrackItem>
+                </TimelineTrack>
+                <TimelineTrack>
+                    <TimelineTrackItem width="100px"></TimelineTrackItem>
+                    <TimelineTrackItem width="100px"></TimelineTrackItem>
+                    <TimelineTrackItem width="100px"></TimelineTrackItem>
+                </TimelineTrack>
             </Box>
         </Box>
     );
