@@ -17,24 +17,29 @@ function App() {
         {
             id: "0",
             width: 400,
+            imageUrl: "sample/sample1.png",
         },
         {
             id: "1",
             width: 200,
+            imageUrl: "sample/sample2.png",
         },
     ]);
     const [images, setImages] = useState([
         {
             id: "0",
             width: 100,
+            imageUrl: "sample/sample3.png",
         },
         {
             id: "1",
             width: 200,
+            imageUrl: "sample/sample2.png",
         },
         {
             id: "2",
             width: 300,
+            imageUrl: "sample/sample3.png",
         },
     ]);
 
