@@ -10,13 +10,15 @@ const style = {
     backgroundColor: "silver",
 };
 
-function TimelineTrack({ items, setItems }) {
+function TimelineTrack({ items, setItems, type }) {
+    const isAudioTrack = type === "audio";
+
     const onDragEnd = (result) => {
         if (!result.destination) return;
         setItems(reorderList(items, result.source.index, result.destination.index));
     };
 
-    let onResizeEnd = (id, width) => {
+    const onResizeEnd = (id, width) => {
         setItems((current) =>
             current.map((item) => {
                 if (item.id === id)
@@ -39,6 +41,7 @@ function TimelineTrack({ items, setItems }) {
                                 {(provided, snapshot) => (
                                     <TimelineTrackItem
                                         itemData={item}
+                                        type={type}
                                         onResizeEnd={(width) => onResizeEnd(item.id, width)}
                                         dndProvided={provided}
                                         dndSnapshot={snapshot}

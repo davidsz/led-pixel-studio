@@ -66,8 +66,8 @@ function App() {
             <Box component="main" sx={{ flexGrow: 1, p: 3, height: "100vh" }}>
                 <DrawerHeader />
 
-                <TimelineTrack items={music} setItems={setMusic} />
-                <TimelineTrack items={images} setItems={setImages} />
+                <TimelineTrack type="audio" items={music} setItems={setMusic} />
+                <TimelineTrack type="image" items={images} setItems={setImages} />
             </Box>
         </Box>
     );
