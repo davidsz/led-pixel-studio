@@ -11,7 +11,7 @@ const style = {
 };
 
 function TimelineTrack({ items, setItems, type }) {
-    const isAudioTrack = type === "audio";
+    // const isAudioTrack = type === "audio";
 
     const onDragEnd = (result) => {
         if (!result.destination) return;

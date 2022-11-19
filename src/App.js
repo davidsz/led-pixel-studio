@@ -16,13 +16,8 @@ function App() {
     const [music, setMusic] = useState([
         {
             id: "0",
-            width: 400,
-            imageUrl: "sample/sample1.png",
-        },
-        {
-            id: "1",
-            width: 200,
-            imageUrl: "sample/sample2.png",
+            width: 250,
+            audioURL: "sample/07023003.mp3",
         },
     ]);
     const [images, setImages] = useState([
