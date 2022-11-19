@@ -1,6 +1,7 @@
 import WaveformData from "waveform-data";
 
-export function generateWaveform(audioURL, callback) {
+export function initializeAudio(audioURL, callback) {
+    const audioContext = new AudioContext();
     fetch(audioURL)
         .then((response) => {
             if (response.ok) {
@@ -9,40 +10,36 @@ export function generateWaveform(audioURL, callback) {
                 throw new Error(`${response.status} ${response.statusText}`);
             }
         })
-        .then((buffer) => {
-            const audioContext = new AudioContext();
+        .then((arrayBuffer) => audioContext.decodeAudioData(arrayBuffer))
+        .then((audioBuffer) => {
             const options = {
                 audio_context: audioContext,
-                array_buffer: buffer,
+                audio_buffer: audioBuffer,
                 scale: 1024,
+                // PAIN: The worker somehow wrecks the audioBuffer object, then can't be played later.
+                disable_worker: true,
             };
 
-            return new Promise((resolve, reject) => {
-                WaveformData.createFromAudio(options, (err, waveform) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve(waveform);
-                    }
-                    audioContext.close();
-                });
+            WaveformData.createFromAudio(options, (err, waveform) => {
+                if (err) throw new Error(err);
+                else callback(audioBuffer, waveform);
+                audioContext.close();
             });
-        })
-        .then((waveform) => {
-            console.log(`Waveform has ${waveform.channels} channels`);
-            console.log(`Waveform has length ${waveform.length} points`);
-            callback(waveform);
         });
 }
 
 export function drawWaveform(canvas, waveform) {
+    const scaleY = (amplitude, height) => {
+        const range = 256;
+        const offset = 128;
+        return height - ((amplitude + offset) * height) / range;
+    };
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // TODO: Get rid or support offset
     let offsetX = 0;
-    if (offsetX > waveform.length - canvas.width)
-        offsetX = waveform.length - canvas.width;
+    if (offsetX > waveform.length - canvas.width) offsetX = waveform.length - canvas.width;
 
     const waveformHeight = canvas.height / waveform.channels;
 
@@ -67,8 +64,12 @@ export function drawWaveform(canvas, waveform) {
     }
 }
 
-function scaleY(amplitude, height) {
-    const range = 256;
-    const offset = 128;
-    return height - ((amplitude + offset) * height) / range;
-}
+export const playMusicTrack = (track) => {
+    const audioContext = new AudioContext();
+    for (let i = 0; i < track.length; i++) {
+        const source = audioContext.createBufferSource();
+        source.buffer = track[i].audioBuffer;
+        source.connect(audioContext.destination);
+        source.start();
+    }
+};

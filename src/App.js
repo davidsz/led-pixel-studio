@@ -11,6 +11,12 @@ import DrawerMenu from "./components/DrawerMenu";
 import { DrawerHeader } from "./components/DrawerMenu";
 import TopBar from "./components/TopBar";
 
+import { IconButton } from "@mui/material";
+import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import SkipNextIcon from '@mui/icons-material/SkipNext';
+import { playMusicTrack } from "./features/audio";
+
 function App() {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [music, setMusic] = useState([
@@ -18,6 +24,15 @@ function App() {
             id: "0",
             width: 250,
             audioURL: "sample/07023003.mp3",
+            audioBuffer: null,
+            waveform: null,
+        },
+        {
+            id: "1",
+            width: 250,
+            audioURL: "sample/Yodel_Sound_Effect.mp3",
+            audioBuffer: null,
+            waveform: null,
         },
     ]);
     const [images, setImages] = useState([
@@ -60,6 +75,18 @@ function App() {
             </DrawerMenu>
             <Box component="main" sx={{ flexGrow: 1, p: 3, height: "100vh" }}>
                 <DrawerHeader />
+
+                <Box sx={{ display: "flex", alignItems: "center", pl: 1, pb: 1 }}>
+                    <IconButton aria-label="previous">
+                        <SkipPreviousIcon />
+                    </IconButton>
+                    <IconButton aria-label="play/pause" onClick={() => playMusicTrack(music)}>
+                        <PlayArrowIcon sx={{ height: 38, width: 38 }} />
+                    </IconButton>
+                    <IconButton aria-label="next">
+                        <SkipNextIcon />
+                    </IconButton>
+                </Box>
 
                 <TimelineTrack type="audio" items={music} setItems={setMusic} />
                 <TimelineTrack type="image" items={images} setItems={setImages} />

@@ -1,7 +1,7 @@
 import { CircularProgress } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { useEffect, useId, useState } from "react";
-import { generateWaveform, drawWaveform } from "../features/audio";
+import { useEffect, useId } from "react";
+import { initializeAudio, drawWaveform } from "../features/audio";
 import { makeElementResizable } from "../features/util";
 
 const devicePixelCount = 64;
@@ -36,10 +36,9 @@ export const AudioPlaceholder = styled("div")(({ theme }) => ({
     backgroundColor: "white",
 }));
 
-function TimelineTrackItem({ itemData, type, onResizeEnd, dndProvided, dndSnapshot }) {
+function TimelineTrackItem({ itemData, type, onResizeEnd, onAudioInitialized, dndProvided, dndSnapshot }) {
     const isImage = type === "image";
     const isAudio = type === "audio";
-    const [waveform, setWaveform] = useState(null);
     const id = useId();
 
     useEffect(() => {
@@ -53,14 +52,14 @@ function TimelineTrackItem({ itemData, type, onResizeEnd, dndProvided, dndSnapsh
                 },
             });
         } else if (isAudio) {
-            generateWaveform(itemData.audioURL, (waveform) => {
-                setWaveform(waveform);
+            initializeAudio(itemData.audioURL, (audioBuffer, waveform) => {
+                onAudioInitialized(audioBuffer, waveform);
             });
         }
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
-        if (isAudio && waveform !== null) drawWaveform(document.getElementById(`${id}-canvas`), waveform);
+        if (isAudio && itemData.waveform !== null) drawWaveform(document.getElementById(`${id}-canvas`), itemData.waveform);
     });
 
     return (
@@ -72,7 +71,7 @@ function TimelineTrackItem({ itemData, type, onResizeEnd, dndProvided, dndSnapsh
                 display: "flex",
                 alignItems: "stretch",
                 position: "relative",
-                width: `${waveform ? waveform.length : itemData.width}px`,
+                width: `${itemData.waveform ? itemData.waveform.length : itemData.width}px`,
                 height: `${devicePixelCount}px`,
                 marginRight: "0px",
                 backgroundColor: "gray",
@@ -86,10 +85,10 @@ function TimelineTrackItem({ itemData, type, onResizeEnd, dndProvided, dndSnapsh
             )}
             {isAudio && (
                 <>
-                    {waveform !== null ? (
+                    {itemData.waveform !== null ? (
                         <AudioPreview
                             id={`${id}-canvas`}
-                            width={waveform ? waveform.length : itemData.width}
+                            width={itemData.waveform ? itemData.waveform.length : itemData.width}
                             height={devicePixelCount}
                             {...dndProvided.dragHandleProps}
                         />

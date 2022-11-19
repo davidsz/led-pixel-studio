@@ -31,6 +31,20 @@ function TimelineTrack({ items, setItems, type }) {
         );
     };
 
+    const onAudioInitialized = (id, audioBuffer, waveform) => {
+        setItems((current) =>
+            current.map((item) => {
+                if (item.id === id)
+                    return {
+                        ...item,
+                        audioBuffer: audioBuffer,
+                        waveform: waveform,
+                    };
+                else return item;
+            })
+        );
+    };
+
     return (
         <DragDropContext onDragEnd={onDragEnd}>
             <Droppable droppableId="droppable" direction="horizontal">
@@ -43,6 +57,7 @@ function TimelineTrack({ items, setItems, type }) {
                                         itemData={item}
                                         type={type}
                                         onResizeEnd={(width) => onResizeEnd(item.id, width)}
+                                        onAudioInitialized={(buffer, waveform) => onAudioInitialized(item.id, buffer, waveform)}
                                         dndProvided={provided}
                                         dndSnapshot={snapshot}
                                     />
