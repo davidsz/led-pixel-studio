@@ -11,10 +11,11 @@ import DrawerMenu from "./components/DrawerMenu";
 import { DrawerHeader } from "./components/DrawerMenu";
 import TopBar from "./components/TopBar";
 import { IconButton } from "@mui/material";
-import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import SkipNextIcon from '@mui/icons-material/SkipNext';
+import SkipPreviousIcon from "@mui/icons-material/SkipPrevious";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import { playAudioTrack } from "./features/audio";
+import Timeline from "./components/Timeline";
+import StopIcon from "@mui/icons-material/Stop";
 
 function App() {
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -25,6 +26,7 @@ function App() {
             audioURL: "sample/07023003.mp3",
             audioBuffer: null,
             waveform: null,
+            length: 0,
         },
         {
             id: "1",
@@ -32,12 +34,13 @@ function App() {
             audioURL: "sample/Yodel_Sound_Effect.mp3",
             audioBuffer: null,
             waveform: null,
+            length: 0,
         },
     ]);
     const [images, setImages] = useState([
         {
             id: "0",
-            width: 100,
+            width: 300,
             imageUrl: "sample/sample1.png",
         },
         {
@@ -47,10 +50,19 @@ function App() {
         },
         {
             id: "2",
-            width: 300,
+            width: 500,
             imageUrl: "sample/sample3.png",
         },
     ]);
+    const [currentTime, setCurrentTime] = useState(3.5);
+
+    let totalAudioLength = 0,
+        totalAudioPixelLength = 0;
+    music.forEach((audio) => {
+        totalAudioLength += audio.length;
+        totalAudioPixelLength += audio.waveform ? audio.waveform.length : 0;
+    });
+    let resolution = totalAudioLength > 0 ? totalAudioPixelLength / totalAudioLength : 0;
 
     return (
         <Box sx={{ display: "flex" }}>
@@ -83,12 +95,14 @@ function App() {
                         <PlayArrowIcon sx={{ height: 38, width: 38 }} />
                     </IconButton>
                     <IconButton aria-label="next">
-                        <SkipNextIcon />
+                        <StopIcon />
                     </IconButton>
                 </Box>
 
-                <TimelineTrack type="audio" items={music} setItems={setMusic} />
-                <TimelineTrack type="image" items={images} setItems={setImages} />
+                <Timeline seconds={totalAudioLength} pixelPerSecond={resolution} currentTime={currentTime}>
+                    <TimelineTrack type="audio" items={music} setItems={setMusic} />
+                    <TimelineTrack type="image" items={images} setItems={setImages} />
+                </Timeline>
             </Box>
         </Box>
     );

@@ -6,13 +6,13 @@ import { makeElementResizable } from "../features/util";
 
 const devicePixelCount = 64;
 
-export const ImagePreview = styled("div")(({ theme }) => ({
+const ImagePreview = styled("div")(({ theme }) => ({
     width: "100%",
     height: `${devicePixelCount}px`,
     backgroundRepeat: "repeat-x",
 }));
 
-export const ImageResizeHandle = styled("div")(({ theme }) => ({
+const ImageResizeHandle = styled("div")(({ theme }) => ({
     width: "7px",
     height: `${devicePixelCount}px`,
     flexShrink: 0,
@@ -20,13 +20,13 @@ export const ImageResizeHandle = styled("div")(({ theme }) => ({
     cursor: "col-resize",
 }));
 
-export const AudioPreview = styled("canvas")(({ theme }) => ({
+const AudioPreview = styled("canvas")(({ theme }) => ({
     width: "100%",
     height: `${devicePixelCount}px`,
     borderLeft: "black 1px solid",
 }));
 
-export const AudioPlaceholder = styled("div")(({ theme }) => ({
+const AudioPlaceholder = styled("div")(({ theme }) => ({
     width: "100%",
     height: `${devicePixelCount}px`,
     display: "flex",

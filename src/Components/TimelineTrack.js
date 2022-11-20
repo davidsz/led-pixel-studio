@@ -39,6 +39,7 @@ function TimelineTrack({ items, setItems, type }) {
                         ...item,
                         audioBuffer: audioBuffer,
                         waveform: waveform,
+                        length: audioBuffer.duration,
                     };
                 else return item;
             })
