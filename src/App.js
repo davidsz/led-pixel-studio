@@ -10,12 +10,11 @@ import TimelineTrack from "./components/TimelineTrack";
 import DrawerMenu from "./components/DrawerMenu";
 import { DrawerHeader } from "./components/DrawerMenu";
 import TopBar from "./components/TopBar";
-
 import { IconButton } from "@mui/material";
 import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import SkipNextIcon from '@mui/icons-material/SkipNext';
-import { playMusicTrack } from "./features/audio";
+import { playAudioTrack } from "./features/audio";
 
 function App() {
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -39,7 +38,7 @@ function App() {
         {
             id: "0",
             width: 100,
-            imageUrl: "sample/sample3.png",
+            imageUrl: "sample/sample1.png",
         },
         {
             id: "1",
@@ -80,7 +79,7 @@ function App() {
                     <IconButton aria-label="previous">
                         <SkipPreviousIcon />
                     </IconButton>
-                    <IconButton aria-label="play/pause" onClick={() => playMusicTrack(music)}>
+                    <IconButton aria-label="play/pause" onClick={() => playAudioTrack(music)}>
                         <PlayArrowIcon sx={{ height: 38, width: 38 }} />
                     </IconButton>
                     <IconButton aria-label="next">
