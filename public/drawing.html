@@ -39,7 +39,7 @@
 
                 // Calculate number of sections from image width/height ratio
                 const ratio = Math.round(image.width / image.height);
-                const numSection = Math.round(convertInterval(ratio, [0.5, 3], [20, 4]));
+                const numSection = Math.round(convertInterval(ratio, [0.5, 2], [20, 3]));
 
                 const sectionArc = (2 * Math.PI) / numSection;
                 const pixelArc = sectionArc / image.width;
@@ -49,7 +49,8 @@
                         radius = 256 - y * 2;
                         for (let x = 0; x < image.width; x++) {
                             const imageData = context.getImageData(x, y, 1, 1).data;
-                            context.strokeStyle = "rgba(" + imageData[0] + ", " + imageData[1] + ", " + imageData[2] + ", " + imageData[3] + ")";
+                            context.strokeStyle =
+                                "rgba(" + imageData[0] + ", " + imageData[1] + ", " + imageData[2] + ", " + imageData[3] + ")";
                             context.lineWidth = 2;
                             startArc = sectionStart + x * pixelArc;
                             endArc = startArc + pixelArc;
@@ -59,12 +60,12 @@
                         }
                     }
                 }
+            }
 
-                function convertInterval(value, from, to) {
-                    if (value < from[0]) value = from[0];
-                    if (value > from[1]) value = from[1];
-                    return ((ratio - from[0]) * (to[0] - to[1])) / (from[1] - from[0]) + to[1];
-                }
+            function convertInterval(value, from, to) {
+                if (value < from[0]) value = from[0];
+                if (value > from[1]) value = from[1];
+                return ((value - from[0]) * (to[0] - to[1])) / (from[1] - from[0]) + to[1];
             }
         </script>
     </head>

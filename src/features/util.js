@@ -65,16 +65,31 @@ export function makeElementDraggable(element, options = { horizontal: true, vert
     function dragMouseMove(e) {
         e = e || window.event;
         e.preventDefault();
-        posX = prevPosX - e.clientX;
-        posY = prevPosY - e.clientY;
-        prevPosX = e.clientX;
-        prevPosY = e.clientY;
-        if (options?.vertical) element.style.top = element.offsetTop - posY + "px";
-        if (options?.horizontal) element.style.left = element.offsetLeft - posX + "px";
+        if (options?.vertical) {
+            posY = prevPosY - e.clientY;
+            prevPosY = e.clientY;
+            element.style.top = element.offsetTop - posY + "px";
+        }
+        if (options?.horizontal) {
+            posX = prevPosX - e.clientX;
+            prevPosX = e.clientX;
+            element.style.left = element.offsetLeft - posX + "px";
+        }
     }
 
     function dragMouseUp() {
-        if (options.doneCallback) options.doneCallback(element.offsetTop - posY, element.offsetLeft - posX);
+        let x = element.offsetLeft - posX;
+        if (x < 0) {
+            x = 0;
+            element.style.left = "0px";
+        }
+        let y = element.offsetTop - posY;
+        if (y < 0) {
+            y = 0;
+            element.style.top = "0px";
+        }
+        if (options.doneCallback)
+            options.doneCallback(y, x);
         document.removeEventListener("mousemove", dragMouseMove);
         document.removeEventListener("mouseup", dragMouseUp);
     }
