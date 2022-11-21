@@ -1,4 +1,6 @@
 import { styled } from "@mui/material/styles";
+import { useEffect, useId } from "react";
+import { makeElementDraggable } from "../features/util";
 
 const TimelineOuter = styled("div")(({ theme }) => ({
     width: "100%",
@@ -33,7 +35,21 @@ const Second = styled("div")(({ theme }) => ({
     borderRight: "1px solid #555",
 }));
 
-function Timeline({ seconds, pixelPerSecond, currentTime, children }) {
+function Timeline({ seconds, pixelPerSecond, currentTime, onNavigation, children }) {
+    const cursorId = useId();
+
+    useEffect(() => {
+        let cursorElement = document.getElementById(`${cursorId}-cursor`);
+        if (cursorElement.removeDraggable)
+            cursorElement.removeDraggable();
+        makeElementDraggable(cursorElement, {
+            horizontal: true,
+            vertical: false,
+            doneCallback: (_, left) => onNavigation(left / pixelPerSecond),
+        });
+    }, [pixelPerSecond]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    // Generate time track
     const timeTrackItems = [];
     for (let i = 0; i < seconds; i += 5) {
         let secondElements = [...Array(4)].map((_, j) => <Second key={i + j} style={{ width: `${pixelPerSecond}px` }} />);
@@ -44,11 +60,12 @@ function Timeline({ seconds, pixelPerSecond, currentTime, children }) {
         );
         timeTrackItems.push(fiveSecondsElement);
     }
+
     return (
         <TimelineOuter>
             <TimeTrack>{timeTrackItems}</TimeTrack>
             {children}
-            <Cursor style={{left: currentTime * pixelPerSecond}}/>
+            <Cursor id={`${cursorId}-cursor`} style={{ left: currentTime * pixelPerSecond }} />
         </TimelineOuter>
     );
 }

@@ -23,7 +23,7 @@ const AppBar = styled(MuiAppBar, {
     }),
 }));
 
-function TopBar({ title, drawerOpen, setDrawerOpen }) {
+function TopBar({ title, drawerOpen, setDrawerOpen, children }) {
     return (
         <AppBar position="fixed" open={drawerOpen}>
             <Toolbar>
@@ -38,9 +38,10 @@ function TopBar({ title, drawerOpen, setDrawerOpen }) {
                     }}>
                     <MenuIcon />
                 </IconButton>
-                <Typography variant="h6" noWrap component="div">
+                <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
                     {title}
                 </Typography>
+                {children}
             </Toolbar>
         </AppBar>
     );

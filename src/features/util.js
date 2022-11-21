@@ -40,3 +40,42 @@ export function makeElementResizable(
         document.removeEventListener("mouseup", resizeMouseUp);
     }
 }
+
+export function makeElementDraggable(element, options = { horizontal: true, vertical: true, doneCallback: undefined }) {
+    // The element assumed to have "position: absolute;"
+    let posX = 0,
+        posY = 0,
+        prevPosX = 0,
+        prevPosY = 0;
+    element.addEventListener("mousedown", dragMouseDown);
+    element.removeDraggable = function() {
+        element.removeEventListener("mousedown", dragMouseDown);
+    };
+
+    function dragMouseDown(e) {
+        if (e.button !== 0) return;
+        e = e || window.event;
+        e.preventDefault();
+        prevPosX = e.clientX;
+        prevPosY = e.clientY;
+        document.addEventListener("mousemove", dragMouseMove);
+        document.addEventListener("mouseup", dragMouseUp);
+    }
+
+    function dragMouseMove(e) {
+        e = e || window.event;
+        e.preventDefault();
+        posX = prevPosX - e.clientX;
+        posY = prevPosY - e.clientY;
+        prevPosX = e.clientX;
+        prevPosY = e.clientY;
+        if (options?.vertical) element.style.top = element.offsetTop - posY + "px";
+        if (options?.horizontal) element.style.left = element.offsetLeft - posX + "px";
+    }
+
+    function dragMouseUp() {
+        if (options.doneCallback) options.doneCallback(element.offsetTop - posY, element.offsetLeft - posX);
+        document.removeEventListener("mousemove", dragMouseMove);
+        document.removeEventListener("mouseup", dragMouseUp);
+    }
+}
