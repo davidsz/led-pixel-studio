@@ -13,6 +13,7 @@ import TopBar from "./components/TopBar";
 import Timeline from "./components/Timeline";
 import { Stack } from "@mui/material";
 import MediaControls from "./components/MediaControls";
+import PreviewCanvas from "./components/PreviewCanvas";
 
 function App() {
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -39,20 +40,41 @@ function App() {
             id: "0",
             width: 300,
             imageUrl: "sample/sample1.png",
+            imageObj: null,
         },
         {
             id: "1",
             width: 200,
             imageUrl: "sample/sample2.png",
+            imageObj: null,
         },
         {
             id: "2",
             width: 500,
             imageUrl: "sample/sample3.png",
+            imageObj: null,
         },
     ]);
-    const [currentTime, setCurrentTime] = useState(3.5);
+    const [currentTime, setCurrentTime] = useState(0);
 
+    const handleImageLoaded = (id, image) => {
+        setImages((current) =>
+            current.map((item) => {
+                if (item.id === id)
+                    return {
+                        ...item,
+                        imageObj: image,
+                    };
+                else return item;
+            })
+        );
+    };
+
+    const handleTimelineNavigation = (seconds) => {
+        setCurrentTime(seconds);
+    };
+
+    // Calculate timeline resolution (pixel per second)
     let totalAudioLength = 0,
         totalAudioPixelLength = 0;
     music.forEach((audio) => {
@@ -61,9 +83,19 @@ function App() {
     });
     const resolution = totalAudioLength > 0 ? totalAudioPixelLength / totalAudioLength : 0;
 
-    let handleTimelineNavigation = (seconds) => {
-        setCurrentTime(seconds);
-    };
+    // Determine the currently previewed image
+    let t = 0,
+        currentImageIndex = -1;
+    for (let i = 0; i < images.length; i++) {
+        let prevT = t;
+        t += images[i].width / resolution;
+        if (prevT <= currentTime && t > currentTime) {
+            currentImageIndex = i;
+            break;
+        }
+    }
+    if (t < currentTime) currentImageIndex = -1;
+    let currentImage = currentImageIndex > -1 ? images[currentImageIndex] : null;
 
     return (
         <Box sx={{ display: "flex" }}>
@@ -91,6 +123,8 @@ function App() {
             </DrawerMenu>
             <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
                 <DrawerHeader />
+
+                <PreviewCanvas currentImage={currentImage} imageLoaded={handleImageLoaded} />
 
                 <Timeline
                     seconds={totalAudioLength}

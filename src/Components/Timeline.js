@@ -13,6 +13,7 @@ const Cursor = styled("div")(({ theme }) => ({
     top: "0px",
     position: "absolute",
     backgroundColor: "maroon",
+    cursor: "col-resize",
 }));
 
 const TimeTrack = styled("div")(({ theme }) => ({
