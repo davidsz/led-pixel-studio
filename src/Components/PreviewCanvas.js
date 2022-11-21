@@ -1,6 +1,14 @@
 import { useEffect } from "react";
 import { clearCanvas, drawImage } from "../features/drawing";
 
+const style = {
+    width: "400px",
+    height: "400px",
+    position: "fixed",
+    left: "calc(50% - 200px)",
+    top: "80px",
+}
+
 function PreviewCanvas({ currentImage, imageLoaded }) {
     useEffect(() => {
         if (!currentImage) {
@@ -18,7 +26,7 @@ function PreviewCanvas({ currentImage, imageLoaded }) {
 
     return (
         <>
-            <canvas id="preview-canvas" width="550" height="550" style={{ width: "400px", height: "400px" }} />
+            <canvas id="preview-canvas" width="550" height="550" style={style} />
         </>
     );
 }

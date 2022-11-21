@@ -3,8 +3,10 @@ import { useEffect, useId } from "react";
 import { makeElementDraggable } from "../features/util";
 
 const TimelineOuter = styled("div")(({ theme }) => ({
-    width: "100%",
+    display: "flex",
+    flexDirection: "column",
     position: "relative",
+    marginTop: "400px",
 }));
 
 const Cursor = styled("div")(({ theme }) => ({

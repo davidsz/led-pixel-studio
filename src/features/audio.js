@@ -76,7 +76,7 @@ function concatAudioBuffers(buffers) {
     let numberOfChannels = channels.reduce(function (a, b) {
         return Math.min(a, b);
     });
-    let tmp = context.createBuffer(numberOfChannels, context.sampleRate * totalDuration, context.sampleRate);
+    let tmp = context.createBuffer(numberOfChannels, Math.ceil(context.sampleRate * totalDuration), context.sampleRate);
 
     for (let i = 0; i < numberOfChannels; i++) {
         let channel = tmp.getChannelData(i);
