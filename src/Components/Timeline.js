@@ -2,6 +2,8 @@ import { styled } from "@mui/material/styles";
 import { useEffect, useId } from "react";
 import { makeElementDraggable } from "../features/util";
 
+const _cursorWidth = 6;
+
 const TimelineOuter = styled("div")(({ theme }) => ({
     display: "flex",
     flexDirection: "column",
@@ -10,7 +12,7 @@ const TimelineOuter = styled("div")(({ theme }) => ({
 }));
 
 const Cursor = styled("div")(({ theme }) => ({
-    width: "5px",
+    width: `${_cursorWidth}px`,
     height: "100%",
     top: "0px",
     position: "absolute",
@@ -31,11 +33,13 @@ const FiveSeconds = styled("div")(({ theme }) => ({
     display: "flex",
     flexDirection: "row",
     borderLeft: "2px solid #555",
+    pointerEvents: "none",
 }));
 
 const Second = styled("div")(({ theme }) => ({
     height: "10px",
     borderRight: "1px solid #555",
+    pointerEvents: "none",
 }));
 
 function Timeline({ seconds, pixelPerSecond, currentTime, onNavigation, children }) {
@@ -43,14 +47,18 @@ function Timeline({ seconds, pixelPerSecond, currentTime, onNavigation, children
 
     useEffect(() => {
         let cursorElement = document.getElementById(`${cursorId}-cursor`);
-        if (cursorElement.removeDraggable)
-            cursorElement.removeDraggable();
+        if (cursorElement.removeDraggable) cursorElement.removeDraggable();
         makeElementDraggable(cursorElement, {
             horizontal: true,
             vertical: false,
             doneCallback: (_, left) => onNavigation(left / pixelPerSecond),
         });
     }, [pixelPerSecond]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    const handleTimetrackClick = (e) => {
+        let rect = e.target.getBoundingClientRect();
+        onNavigation((e.clientX - rect.left - (_cursorWidth / 2)) / pixelPerSecond);
+    }
 
     // Generate time track
     const timeTrackItems = [];
@@ -66,7 +74,7 @@ function Timeline({ seconds, pixelPerSecond, currentTime, onNavigation, children
 
     return (
         <TimelineOuter>
-            <TimeTrack>{timeTrackItems}</TimeTrack>
+            <TimeTrack onClick={handleTimetrackClick}>{timeTrackItems}</TimeTrack>
             {children}
             <Cursor id={`${cursorId}-cursor`} style={{ left: currentTime * pixelPerSecond }} />
         </TimelineOuter>
