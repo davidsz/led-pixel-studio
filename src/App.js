@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { AudioContext } from ".";
 import Box from "@mui/material/Box";
 import List from "@mui/material/List";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -16,6 +17,7 @@ import MediaControls from "./components/MediaControls";
 import PreviewCanvas from "./components/PreviewCanvas";
 
 function App() {
+    const audioManager = useContext(AudioContext);
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [music, setMusic] = useState([
         {
@@ -70,7 +72,9 @@ function App() {
         );
     };
 
-    const handleTimelineNavigation = (seconds) => {
+    const handleTimelineNavigation = (seconds, userInitiated) => {
+        if (userInitiated)
+            audioManager.seek(seconds);
         setCurrentTime(seconds);
     };
 
@@ -102,7 +106,7 @@ function App() {
             <CssBaseline />
             <TopBar title="LED Pixel Studio" drawerOpen={drawerOpen} setDrawerOpen={setDrawerOpen}>
                 <Stack spacing={2} direction="row" alignItems="center" sx={{ flexGrow: 1 }}>
-                    <MediaControls music={music} />
+                    <MediaControls musicTrack={music} onNavigation={handleTimelineNavigation} />
                 </Stack>
             </TopBar>
             <DrawerMenu open={drawerOpen} closeDrawer={() => setDrawerOpen(false)}>

@@ -1,5 +1,6 @@
 import { styled } from "@mui/material/styles";
-import { useEffect, useId } from "react";
+import { useEffect, useId, useContext } from "react";
+import { AudioContext } from "..";
 import { makeElementDraggable } from "../features/util";
 
 const _cursorWidth = 6;
@@ -43,22 +44,35 @@ const Second = styled("div")(({ theme }) => ({
 }));
 
 function Timeline({ seconds, pixelPerSecond, currentTime, onNavigation, children }) {
+    const audioManager = useContext(AudioContext);
     const cursorId = useId();
 
     useEffect(() => {
+        let wasPlaying = false;
         let cursorElement = document.getElementById(`${cursorId}-cursor`);
         if (cursorElement.removeDraggable) cursorElement.removeDraggable();
         makeElementDraggable(cursorElement, {
             horizontal: true,
             vertical: false,
-            doneCallback: (_, left) => onNavigation(left / pixelPerSecond),
+            grabbedCallback: () => {
+                if (audioManager.isPlaying) {
+                    audioManager.pause();
+                    wasPlaying = true;
+                }
+            },
+            doneCallback: (_, left) => {
+                onNavigation(left / pixelPerSecond, true);
+                if (wasPlaying) audioManager.play();
+            },
         });
     }, [pixelPerSecond]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const handleTimetrackClick = (e) => {
+        console.log("handleTimetrackClick");
+        // TODO: Not trivial when playing music and trying to navigate
         let rect = e.target.getBoundingClientRect();
-        onNavigation((e.clientX - rect.left - (_cursorWidth / 2)) / pixelPerSecond);
-    }
+        onNavigation((e.clientX - rect.left - _cursorWidth / 2) / pixelPerSecond, true);
+    };
 
     // Generate time track
     const timeTrackItems = [];

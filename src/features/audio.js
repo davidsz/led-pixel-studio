@@ -63,39 +63,3 @@ export function drawWaveform(canvas, waveform) {
         ctx.fill();
     }
 }
-
-function concatAudioBuffers(buffers) {
-    const context = new AudioContext();
-    let channels = [];
-    let totalDuration = 0;
-    for (let i = 0; i < buffers.length; i++) {
-        channels.push(buffers[i].numberOfChannels);
-        totalDuration += buffers[i].duration;
-    }
-
-    let numberOfChannels = channels.reduce(function (a, b) {
-        return Math.min(a, b);
-    });
-    let tmp = context.createBuffer(numberOfChannels, Math.ceil(context.sampleRate * totalDuration), context.sampleRate);
-
-    for (let i = 0; i < numberOfChannels; i++) {
-        let channel = tmp.getChannelData(i);
-        let dataIndex = 0;
-        for (let j = 0; j < buffers.length; j++) {
-            channel.set(buffers[j].getChannelData(i), dataIndex);
-            dataIndex += buffers[j].length;
-        }
-    }
-
-    return tmp;
-}
-
-export const playAudioTrack = (track) => {
-    const audioContext = new AudioContext();
-    let bufferList = [];
-    track.forEach((audio) => bufferList.push(audio.audioBuffer));
-    const source = audioContext.createBufferSource();
-    source.buffer = concatAudioBuffers(bufferList);
-    source.connect(audioContext.destination);
-    source.start();
-};

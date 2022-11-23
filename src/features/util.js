@@ -47,14 +47,17 @@ export function makeElementResizable(
     }
 }
 
-export function makeElementDraggable(element, options = { horizontal: true, vertical: true, doneCallback: undefined }) {
+export function makeElementDraggable(
+    element,
+    options = { horizontal: true, vertical: true, grabbedCallback: undefined, doneCallback: undefined }
+) {
     // The element assumed to have "position: absolute;"
     let posX = 0,
         posY = 0,
         prevPosX = 0,
         prevPosY = 0;
     element.addEventListener("mousedown", dragMouseDown);
-    element.removeDraggable = function() {
+    element.removeDraggable = function () {
         element.removeEventListener("mousedown", dragMouseDown);
     };
 
@@ -66,6 +69,8 @@ export function makeElementDraggable(element, options = { horizontal: true, vert
         prevPosY = e.clientY;
         document.addEventListener("mousemove", dragMouseMove);
         document.addEventListener("mouseup", dragMouseUp);
+        if (options.grabbedCallback)
+            options.grabbedCallback(element.offsetTop - prevPosY, element.offsetLeft - prevPosX);
     }
 
     function dragMouseMove(e) {
@@ -94,8 +99,7 @@ export function makeElementDraggable(element, options = { horizontal: true, vert
             y = 0;
             element.style.top = "0px";
         }
-        if (options.doneCallback)
-            options.doneCallback(y, x);
+        if (options.doneCallback) options.doneCallback(y, x);
         document.removeEventListener("mousemove", dragMouseMove);
         document.removeEventListener("mouseup", dragMouseUp);
     }
