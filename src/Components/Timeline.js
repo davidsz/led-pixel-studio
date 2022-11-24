@@ -27,6 +27,7 @@ const TimeTrack = styled("div")(({ theme }) => ({
     display: "flex",
     flexDirection: "row",
     borderTop: "2px solid #555",
+    cursor: "s-resize",
 }));
 
 const FiveSeconds = styled("div")(({ theme }) => ({
@@ -68,8 +69,6 @@ function Timeline({ seconds, pixelPerSecond, currentTime, onNavigation, children
     }, [pixelPerSecond]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const handleTimetrackClick = (e) => {
-        console.log("handleTimetrackClick");
-        // TODO: Not trivial when playing music and trying to navigate
         let rect = e.target.getBoundingClientRect();
         onNavigation((e.clientX - rect.left - _cursorWidth / 2) / pixelPerSecond, true);
     };

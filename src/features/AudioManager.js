@@ -60,7 +60,6 @@ class AudioManager {
 
     play() {
         if (this.isPlaying) return;
-        console.log("play");
 
         // Always create a new source, because they can't be reused with different buffer
         let audioSource = this.audioContext.createBufferSource();
@@ -91,9 +90,9 @@ class AudioManager {
     }
 
     pause() {
-        console.log("pause");
         clearInterval(this.timeChangedInterval);
-        this.currentAudioSource.stop(0);
+        if (this.currentAudioSource)
+            this.currentAudioSource.stop(0);
         this.pausedAt = Date.now() - this.startedAt;
         this.isPlaying = false;
         this.stateChangedCallback(false);
@@ -101,7 +100,8 @@ class AudioManager {
 
     stop() {
         clearInterval(this.timeChangedInterval);
-        this.currentAudioSource.stop(0);
+        if (this.currentAudioSource)
+            this.currentAudioSource.stop(0);
         this.pausedAt = null;
         this.isPlaying = false;
         this.stateChangedCallback(false);
@@ -109,8 +109,20 @@ class AudioManager {
     }
 
     seek(time) {
-        console.log("seek", time);
+        let wasPlaying = false;
+        if (this.isPlaying)
+            wasPlaying = true;
+
+        clearInterval(this.timeChangedInterval);
+        if (this.currentAudioSource) {
+            this.currentAudioSource.onended = null;
+            this.currentAudioSource.stop(0);
+        }
+        this.isPlaying = false;
+
         this.pausedAt = time * 1000;
+        if (wasPlaying)
+            this.play();
     }
 }
 
