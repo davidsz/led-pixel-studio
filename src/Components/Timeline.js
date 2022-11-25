@@ -59,7 +59,8 @@ function Timeline({ seconds, pixelPerSecond, currentTime, onNavigation, children
                 if (audioManager.isPlaying) {
                     audioManager.pause();
                     wasPlaying = true;
-                }
+                } else
+                    wasPlaying = false;
             },
             doneCallback: (_, left) => {
                 onNavigation(left / pixelPerSecond, true);
@@ -68,9 +69,11 @@ function Timeline({ seconds, pixelPerSecond, currentTime, onNavigation, children
         });
     }, [pixelPerSecond]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    const handleTimetrackClick = (e) => {
+    const handleTimetrackMouseDown = (e) => {
         let rect = e.target.getBoundingClientRect();
-        onNavigation((e.clientX - rect.left - _cursorWidth / 2) / pixelPerSecond, true);
+        let cursorElement = document.getElementById(`${cursorId}-cursor`);
+        // TODO: Maybe refactor args? (Currently drunk and afraid to touch it.)
+        cursorElement.initiateDrag(e, e.clientX - rect.left - _cursorWidth / 2, e.clientY - rect.top);
     };
 
     // Generate time track
@@ -87,7 +90,9 @@ function Timeline({ seconds, pixelPerSecond, currentTime, onNavigation, children
 
     return (
         <TimelineOuter>
-            <TimeTrack onClick={handleTimetrackClick}>{timeTrackItems}</TimeTrack>
+            <TimeTrack onMouseDown={handleTimetrackMouseDown}>
+                {timeTrackItems}
+            </TimeTrack>
             {children}
             <Cursor id={`${cursorId}-cursor`} style={{ left: currentTime * pixelPerSecond }} />
         </TimelineOuter>

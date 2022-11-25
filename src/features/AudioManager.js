@@ -28,7 +28,7 @@ function concatAudioBuffers(buffers) {
 
 class AudioManager {
     constructor() {
-        if (instance) throw new Error("You can only create one instance of LocalStorageManager.");
+        if (instance) throw new Error("You can only create one instance of AudioManager.");
         instance = this;
 
         this.audioContext = new AudioContext();

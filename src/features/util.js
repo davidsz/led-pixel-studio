@@ -57,8 +57,24 @@ export function makeElementDraggable(
         prevPosX = 0,
         prevPosY = 0;
     element.addEventListener("mousedown", dragMouseDown);
+
     element.removeDraggable = function () {
         element.removeEventListener("mousedown", dragMouseDown);
+    };
+
+    // Initiate drag programmatically instead of clicking on the element
+    element.initiateDrag = function (e, x, y) {
+        if (options?.vertical) {
+            prevPosY = e.clientY;
+            element.style.top = y + "px";
+        }
+        if (options?.horizontal) {
+            prevPosX = e.clientX;
+            element.style.left = x + "px";
+        }
+        document.addEventListener("mousemove", dragMouseMove);
+        document.addEventListener("mouseup", dragMouseUp);
+        if (options.grabbedCallback) options.grabbedCallback(element.offsetTop - prevPosY, element.offsetLeft - prevPosX);
     };
 
     function dragMouseDown(e) {
@@ -69,8 +85,7 @@ export function makeElementDraggable(
         prevPosY = e.clientY;
         document.addEventListener("mousemove", dragMouseMove);
         document.addEventListener("mouseup", dragMouseUp);
-        if (options.grabbedCallback)
-            options.grabbedCallback(element.offsetTop - prevPosY, element.offsetLeft - prevPosX);
+        if (options.grabbedCallback) options.grabbedCallback(element.offsetTop - prevPosY, element.offsetLeft - prevPosX);
     }
 
     function dragMouseMove(e) {
