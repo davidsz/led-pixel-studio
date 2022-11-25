@@ -5,18 +5,23 @@ export function clearCanvas(canvasElement) {
     context.clearRect(0, 0, canvasElement.width, canvasElement.height);
 }
 
+function rgbAtDataPixel(data, i) {
+    return `rgba(${data[i]}, ${data[i + 1]}, ${data[i + 2]}, ${data[i + 3]})`;
+}
+
 export function drawImage(canvasElement, image) {
     let tempCanvas = document.createElement("canvas");
     let tempContext = tempCanvas.getContext("2d");
     tempContext.drawImage(image, 0, 0);
+    const sourceImageData = tempContext.getImageData(0, 0, tempCanvas.width, tempCanvas.height).data;
 
     let context = canvasElement.getContext("2d");
     context.clearRect(0, 0, canvasElement.width, canvasElement.height);
     context.lineWidth = 2;
     context.strokeStyle = "maroon";
 
-    let centerX = 275,
-        centerY = 275,
+    let centerX = canvasElement.width / 2,
+        centerY = canvasElement.height / 2,
         radius = 0,
         startArc = 0,
         endArc = 0;
@@ -32,9 +37,9 @@ export function drawImage(canvasElement, image) {
         for (let y = 0; y < image.height; y++) {
             radius = 256 - y * 2;
             for (let x = 0; x < image.width; x++) {
-                const imageData = tempContext.getImageData(x, y, 1, 1).data;
-                context.strokeStyle =
-                    "rgba(" + imageData[0] + ", " + imageData[1] + ", " + imageData[2] + ", " + imageData[3] + ")";
+                let pIndex = x * 4;
+                if (y > 0) pIndex += (y - 1) * tempCanvas.width * 4;
+                context.strokeStyle = rgbAtDataPixel(sourceImageData, pIndex);
                 startArc = sectionStart + x * pixelArc;
                 endArc = startArc + pixelArc;
                 context.beginPath();
