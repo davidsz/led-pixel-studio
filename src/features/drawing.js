@@ -1,7 +1,7 @@
 import { convertInterval } from "./util";
 
 export function clearCanvas(canvasElement) {
-    let context = canvasElement.getContext("2d");
+    const context = canvasElement.getContext("2d");
     context.clearRect(0, 0, canvasElement.width, canvasElement.height);
 }
 
@@ -9,13 +9,13 @@ function rgbAtDataPixel(data, i) {
     return `rgba(${data[i]}, ${data[i + 1]}, ${data[i + 2]}, ${data[i + 3]})`;
 }
 
-export function drawImage(canvasElement, image) {
-    let tempCanvas = document.createElement("canvas");
-    let tempContext = tempCanvas.getContext("2d");
+export function drawCircularPreview(canvasElement, image) {
+    const tempCanvas = new OffscreenCanvas(image.width, image.height);
+    const tempContext = tempCanvas.getContext("2d");
     tempContext.drawImage(image, 0, 0);
     const sourceImageData = tempContext.getImageData(0, 0, tempCanvas.width, tempCanvas.height).data;
 
-    let context = canvasElement.getContext("2d");
+    const context = canvasElement.getContext("2d");
     context.clearRect(0, 0, canvasElement.width, canvasElement.height);
     context.lineWidth = 2;
     context.strokeStyle = "maroon";

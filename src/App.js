@@ -42,36 +42,39 @@ function App() {
             length: 0,
         },
     ]);
-    // TODO: We can optimize circular preview by drawing once and store here
     const [images, setImages] = useState([
         {
             id: "0",
             width: 300,
             imageUrl: "sample/sample1.png",
             imageObj: null,
+            circularPreview: null,
         },
         {
             id: "1",
             width: 200,
             imageUrl: "sample/sample2.png",
             imageObj: null,
+            circularPreview: null,
         },
         {
             id: "2",
             width: 500,
             imageUrl: "sample/sample3.png",
             imageObj: null,
+            circularPreview: null,
         },
     ]);
     const [currentTime, setCurrentTime] = useState(0);
 
-    const handleImageLoaded = (id, image) => {
+    const handleImageLoaded = (id, image, preview) => {
         setImages((current) =>
             current.map((item) => {
                 if (item.id === id)
                     return {
                         ...item,
                         imageObj: image,
+                        circularPreview: preview,
                     };
                 else return item;
             })

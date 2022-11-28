@@ -1,5 +1,7 @@
 import { useEffect } from "react";
-import { clearCanvas, drawImage } from "../features/drawing";
+import { clearCanvas, drawCircularPreview } from "../features/drawing";
+
+const _canvasViewportSize = 550;
 
 const style = {
     width: "400px",
@@ -7,7 +9,7 @@ const style = {
     position: "fixed",
     left: "calc(50% - 200px)",
     top: "80px",
-}
+};
 
 function PreviewCanvas({ currentImage, imageLoaded }) {
     useEffect(() => {
@@ -15,18 +17,25 @@ function PreviewCanvas({ currentImage, imageLoaded }) {
             clearCanvas(document.getElementById("preview-canvas"));
             return;
         }
-        if (currentImage.imageObj) {
-            drawImage(document.getElementById("preview-canvas"), currentImage.imageObj);
+        if (currentImage.circularPreview) {
+            // Image is already loaded and preview has been generated
+            const destCtx = document.getElementById("preview-canvas").getContext("2d");
+            destCtx.drawImage(currentImage.circularPreview, 0, 0);
         } else {
+            // We have to download the image, generate preview and store them
             let image = new Image();
-            image.onload = () => imageLoaded(currentImage.id, image);
+            image.onload = () => {
+                const previewCanvas = new OffscreenCanvas(_canvasViewportSize, _canvasViewportSize);
+                drawCircularPreview(previewCanvas, image);
+                imageLoaded(currentImage.id, image, previewCanvas);
+            };
             image.src = currentImage.imageUrl;
         }
     }, [currentImage]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <>
-            <canvas id="preview-canvas" width="550" height="550" style={style} />
+            <canvas id="preview-canvas" width={_canvasViewportSize} height={_canvasViewportSize} style={style} />
         </>
     );
 }
