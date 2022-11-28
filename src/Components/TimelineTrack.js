@@ -1,14 +1,15 @@
+import { styled } from "@mui/material/styles";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { reorderList } from "../features/util";
 import TimelineTrackItem from "./TimelineTrackItem";
 
-const style = {
+const Track = styled("div")(({ theme }) => ({
     display: "flex",
     flexDirection: "row",
     width: "100%",
     marginBottom: "3px",
-    backgroundColor: "silver",
-};
+    backgroundColor: theme.palette.primary.main,
+}));
 
 function TimelineTrack({ items, setItems, type }) {
     // const isAudioTrack = type === "audio";
@@ -50,7 +51,7 @@ function TimelineTrack({ items, setItems, type }) {
         <DragDropContext onDragEnd={onDragEnd}>
             <Droppable droppableId="droppable" direction="horizontal">
                 {(provided, snapshot) => (
-                    <div ref={provided.innerRef} style={style} {...provided.droppableProps}>
+                    <Track ref={provided.innerRef} {...provided.droppableProps}>
                         {items.map((item, index) => (
                             <Draggable key={item.id} draggableId={item.id} index={index}>
                                 {(provided, snapshot) => (
@@ -67,7 +68,7 @@ function TimelineTrack({ items, setItems, type }) {
                         ))}
 
                         {provided.placeholder}
-                    </div>
+                    </Track>
                 )}
             </Droppable>
         </DragDropContext>

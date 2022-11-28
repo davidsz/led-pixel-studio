@@ -4,8 +4,6 @@ import Box from "@mui/material/Box";
 import List from "@mui/material/List";
 import CssBaseline from "@mui/material/CssBaseline";
 import Divider from "@mui/material/Divider";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
 import DrawerMenuitem from "./components/DrawerMenuItem";
 import TimelineTrack from "./components/TimelineTrack";
 import DrawerMenu from "./components/DrawerMenu";
@@ -15,10 +13,17 @@ import Timeline from "./components/Timeline";
 import { Stack } from "@mui/material";
 import MediaControls from "./components/MediaControls";
 import PreviewCanvas from "./components/PreviewCanvas";
+import RestorePageRoundedIcon from "@mui/icons-material/RestorePageRounded";
+import SaveRoundedIcon from "@mui/icons-material/SaveRounded";
+import RestartAltRoundedIcon from "@mui/icons-material/RestartAltRounded";
+import ImageRoundedIcon from "@mui/icons-material/ImageRounded";
+import MusicNoteIcon from "@mui/icons-material/MusicNote";
+import HomeIcon from "@mui/icons-material/Home";
 
 function App() {
     const audioManager = useContext(AudioContext);
     const [drawerOpen, setDrawerOpen] = useState(false);
+    // TODO: Remove URL fields when the corresponding UI / project loader is done
     const [music, setMusic] = useState([
         {
             id: "0",
@@ -37,6 +42,7 @@ function App() {
             length: 0,
         },
     ]);
+    // TODO: We can optimize circular preview by drawing once and store here
     const [images, setImages] = useState([
         {
             id: "0",
@@ -73,8 +79,7 @@ function App() {
     };
 
     const handleTimelineNavigation = (seconds, userInitiated) => {
-        if (userInitiated)
-            audioManager.seek(seconds);
+        if (userInitiated) audioManager.seek(seconds);
         setCurrentTime(seconds);
     };
 
@@ -111,18 +116,18 @@ function App() {
             </TopBar>
             <DrawerMenu open={drawerOpen} closeDrawer={() => setDrawerOpen(false)}>
                 <List>
-                    <DrawerMenuitem open={drawerOpen} text={"Load project"} icon={<InboxIcon />} />
-                    <DrawerMenuitem open={drawerOpen} text={"Save project"} icon={<InboxIcon />} />
-                    <DrawerMenuitem open={drawerOpen} text={"Clear"} icon={<InboxIcon />} />
+                    <DrawerMenuitem open={drawerOpen} text={"Load project"} icon={<RestorePageRoundedIcon />} />
+                    <DrawerMenuitem open={drawerOpen} text={"Save project"} icon={<SaveRoundedIcon />} />
+                    <DrawerMenuitem open={drawerOpen} text={"Clear"} icon={<RestartAltRoundedIcon />} />
                 </List>
                 <Divider />
                 <List>
-                    <DrawerMenuitem open={drawerOpen} text={"Pictures"} icon={<MailIcon />} />
-                    <DrawerMenuitem open={drawerOpen} text={"Music"} icon={<MailIcon />} />
+                    <DrawerMenuitem open={drawerOpen} text={"Pictures"} icon={<ImageRoundedIcon />} />
+                    <DrawerMenuitem open={drawerOpen} text={"Music"} icon={<MusicNoteIcon />} />
                 </List>
                 <Divider />
                 <List>
-                    <DrawerMenuitem open={drawerOpen} text={"Homepage"} icon={<InboxIcon />} />
+                    <DrawerMenuitem open={drawerOpen} text={"Homepage"} icon={<HomeIcon />} />
                 </List>
             </DrawerMenu>
             <Box component="main" sx={{ flexGrow: 1, p: 3 }}>

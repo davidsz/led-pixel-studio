@@ -6,6 +6,27 @@ import App from "./App";
 
 const theme = createTheme({
     _drawerWidth: 240,
+    palette: {
+        _cursorColor: "maroon",
+        _timetrackColor: "#778899",
+        _trackItemColor: "#5F9EA0",
+        _imageResizeHandleColor: "black",
+
+        mode: "dark",
+        primary: {
+            main: "#1B1D23",
+        },
+        secondary: {
+            main: "#0288d1",
+        },
+        background: {
+            default: "#121212",
+            paper: "#1B1D23",
+        },
+        text: {
+            primary: "#72d2f7",
+        },
+    },
 });
 
 export const AudioContext = createContext();

@@ -17,8 +17,9 @@ const Cursor = styled("div")(({ theme }) => ({
     height: "100%",
     top: "0px",
     position: "absolute",
-    backgroundColor: "maroon",
+    backgroundColor: theme.palette._cursorColor,
     cursor: "col-resize",
+    borderRadius: "2px",
 }));
 
 const TimeTrack = styled("div")(({ theme }) => ({
@@ -26,7 +27,7 @@ const TimeTrack = styled("div")(({ theme }) => ({
     height: "30px",
     display: "flex",
     flexDirection: "row",
-    borderTop: "2px solid #555",
+    borderTop: `2px solid ${theme.palette._timetrackColor}`,
     cursor: "s-resize",
 }));
 
@@ -34,13 +35,13 @@ const FiveSeconds = styled("div")(({ theme }) => ({
     height: "14px",
     display: "flex",
     flexDirection: "row",
-    borderLeft: "2px solid #555",
+    borderLeft: `3px solid ${theme.palette._timetrackColor}`,
     pointerEvents: "none",
 }));
 
 const Second = styled("div")(({ theme }) => ({
     height: "10px",
-    borderRight: "1px solid #555",
+    borderRight: `1px solid ${theme.palette._timetrackColor}`,
     pointerEvents: "none",
 }));
 

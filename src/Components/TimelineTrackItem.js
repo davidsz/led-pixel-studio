@@ -6,6 +6,14 @@ import { makeElementResizable } from "../features/util";
 
 const devicePixelCount = 64;
 
+const TrackItemOuter = styled("div")(({ theme }) => ({
+    display: "flex",
+    alignItems: "stretch",
+    position: "relative",
+    marginRight: "0px",
+    backgroundColor: theme.palette._trackItemColor,
+}));
+
 const ImagePreview = styled("div")(({ theme }) => ({
     width: "100%",
     height: `${devicePixelCount}px`,
@@ -16,14 +24,14 @@ const ImageResizeHandle = styled("div")(({ theme }) => ({
     width: "7px",
     height: `${devicePixelCount}px`,
     flexShrink: 0,
-    backgroundColor: "black",
+    backgroundColor: theme.palette._imageResizeHandleColor,
     cursor: "col-resize",
 }));
 
 const AudioPreview = styled("canvas")(({ theme }) => ({
     width: "100%",
     height: `${devicePixelCount}px`,
-    borderLeft: "black 1px solid",
+    borderRight: "black 1px solid",
 }));
 
 const AudioPlaceholder = styled("div")(({ theme }) => ({
@@ -63,18 +71,13 @@ function TimelineTrackItem({ itemData, type, onResizeEnd, onAudioInitialized, dn
     });
 
     return (
-        <div
+        <TrackItemOuter
             ref={dndProvided.innerRef}
             {...dndProvided.draggableProps}
             id={id}
             style={{
-                display: "flex",
-                alignItems: "stretch",
-                position: "relative",
                 width: `${itemData.waveform ? itemData.waveform.length : itemData.width}px`,
                 height: `${devicePixelCount}px`,
-                marginRight: "0px",
-                backgroundColor: "gray",
                 ...dndProvided.draggableProps.style,
             }}>
             {isImage && (
@@ -99,7 +102,7 @@ function TimelineTrackItem({ itemData, type, onResizeEnd, onAudioInitialized, dn
                     )}
                 </>
             )}
-        </div>
+        </TrackItemOuter>
     );
 }
 
