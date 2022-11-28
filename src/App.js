@@ -19,6 +19,8 @@ import RestartAltRoundedIcon from "@mui/icons-material/RestartAltRounded";
 import ImageRoundedIcon from "@mui/icons-material/ImageRounded";
 import MusicNoteIcon from "@mui/icons-material/MusicNote";
 import HomeIcon from "@mui/icons-material/Home";
+import ConfirmDialog from "./components/ConfirmDialog";
+import FileDialog from "./components/FileDialog";
 
 function App() {
     const audioManager = useContext(AudioContext);
@@ -66,6 +68,12 @@ function App() {
         },
     ]);
     const [currentTime, setCurrentTime] = useState(0);
+
+    const [openProjectOpen, setOpenProjectOpen] = useState(false);
+    const [saveProjectOpen, setSaveProjectOpen] = useState(false);
+    const [resetDialogOpen, setResetDialogOpen] = useState(false);
+    const [importPicturesOpen, setImportPicturesOpen] = useState(false);
+    const [importMusicOpen, setImportMusicOpen] = useState(false);
 
     const handleImageLoaded = (id, image, preview) => {
         setImages((current) =>
@@ -119,14 +127,39 @@ function App() {
             </TopBar>
             <DrawerMenu open={drawerOpen} closeDrawer={() => setDrawerOpen(false)}>
                 <List>
-                    <DrawerMenuitem open={drawerOpen} text={"Load project"} icon={<RestorePageRoundedIcon />} />
-                    <DrawerMenuitem open={drawerOpen} text={"Save project"} icon={<SaveRoundedIcon />} />
-                    <DrawerMenuitem open={drawerOpen} text={"Clear"} icon={<RestartAltRoundedIcon />} />
+                    <DrawerMenuitem
+                        open={drawerOpen}
+                        text={"Load project"}
+                        icon={<RestorePageRoundedIcon />}
+                        onClick={() => setOpenProjectOpen(true)}
+                    />
+                    <DrawerMenuitem
+                        open={drawerOpen}
+                        text={"Save project"}
+                        icon={<SaveRoundedIcon />}
+                        onClick={() => setSaveProjectOpen(true)}
+                    />
+                    <DrawerMenuitem
+                        open={drawerOpen}
+                        text={"Clear"}
+                        icon={<RestartAltRoundedIcon />}
+                        onClick={() => setResetDialogOpen(true)}
+                    />
                 </List>
                 <Divider />
                 <List>
-                    <DrawerMenuitem open={drawerOpen} text={"Pictures"} icon={<ImageRoundedIcon />} />
-                    <DrawerMenuitem open={drawerOpen} text={"Music"} icon={<MusicNoteIcon />} />
+                    <DrawerMenuitem
+                        open={drawerOpen}
+                        text={"Import pictures"}
+                        icon={<ImageRoundedIcon />}
+                        onClick={() => setImportPicturesOpen(true)}
+                    />
+                    <DrawerMenuitem
+                        open={drawerOpen}
+                        text={"Import music"}
+                        icon={<MusicNoteIcon />}
+                        onClick={() => setImportMusicOpen(true)}
+                    />
                 </List>
                 <Divider />
                 <List>
@@ -147,6 +180,50 @@ function App() {
                     <TimelineTrack type="image" items={images} setItems={setImages} />
                 </Timeline>
             </Box>
+
+            <FileDialog
+                open={openProjectOpen}
+                onAccept={() => {
+                    // TODO: Implement
+                }}
+                onClose={() => setOpenProjectOpen(false)}
+                title="Choose project to open">
+            </FileDialog>
+
+            <FileDialog
+                open={saveProjectOpen}
+                onAccept={() => {
+                    // TODO: Implement
+                }}
+                onClose={() => setSaveProjectOpen(false)}
+                title="Choose location to save the project">
+            </FileDialog>
+
+            <ConfirmDialog
+                open={resetDialogOpen}
+                onAccept={() => {
+                    // TODO: Implement
+                }}
+                onClose={() => setResetDialogOpen(false)}
+                title="Are you sure you want to reset the workspace?"></ConfirmDialog>
+
+            <FileDialog
+                open={importPicturesOpen}
+                onAccept={() => {
+                    // TODO: Implement
+                }}
+                onClose={() => setImportPicturesOpen(false)}
+                title="Choose images to add to the project">
+            </FileDialog>
+
+            <FileDialog
+                open={importMusicOpen}
+                onAccept={() => {
+                    // TODO: Implement
+                }}
+                onClose={() => setImportMusicOpen(false)}
+                title="Choose music files to add to the project">
+            </FileDialog>
         </Box>
     );
 }

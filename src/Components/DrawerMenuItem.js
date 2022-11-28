@@ -3,7 +3,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 
-function DrawerMenuitem({ open, text, icon }) {
+function DrawerMenuitem({ open, text, icon, onClick }) {
     return (
         <ListItem disablePadding sx={{ display: "block" }}>
             <ListItemButton
@@ -11,7 +11,8 @@ function DrawerMenuitem({ open, text, icon }) {
                     minHeight: 48,
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
-                }}>
+                }}
+                onClick={onClick}>
                 <ListItemIcon
                     sx={{
                         minWidth: 0,
