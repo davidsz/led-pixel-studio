@@ -1,3 +1,4 @@
+import { Tooltip } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { useEffect, useId, useContext } from "react";
 import { AudioContext } from "..";
@@ -60,8 +61,7 @@ function Timeline({ seconds, pixelPerSecond, currentTime, onNavigation, children
                 if (audioManager.isPlaying) {
                     audioManager.pause();
                     wasPlaying = true;
-                } else
-                    wasPlaying = false;
+                } else wasPlaying = false;
             },
             doneCallback: (_, left) => {
                 onNavigation(left / pixelPerSecond, true);
@@ -91,11 +91,11 @@ function Timeline({ seconds, pixelPerSecond, currentTime, onNavigation, children
 
     return (
         <TimelineOuter>
-            <TimeTrack onMouseDown={handleTimetrackMouseDown}>
-                {timeTrackItems}
-            </TimeTrack>
+            <TimeTrack onMouseDown={handleTimetrackMouseDown}>{timeTrackItems}</TimeTrack>
             {children}
-            <Cursor id={`${cursorId}-cursor`} style={{ left: currentTime * pixelPerSecond }} />
+            <Tooltip title={Number(currentTime).toFixed(1)} placement="top" open={true} arrow>
+                <Cursor id={`${cursorId}-cursor`} style={{ left: currentTime * pixelPerSecond }} />
+            </Tooltip>
         </TimelineOuter>
     );
 }
