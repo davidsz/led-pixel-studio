@@ -22,6 +22,8 @@ function PreviewCanvas({ currentImage, imageLoaded }) {
             const destCtx = document.getElementById("preview-canvas").getContext("2d");
             destCtx.drawImage(currentImage.circularPreview, 0, 0);
         } else {
+            // TODO: This will be not called. Remove after removing test data
+
             // We have to download the image, generate preview and store them
             let image = new Image();
             image.onload = () => {

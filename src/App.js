@@ -21,6 +21,7 @@ import MusicNoteIcon from "@mui/icons-material/MusicNote";
 import HomeIcon from "@mui/icons-material/Home";
 import ConfirmDialog from "./components/ConfirmDialog";
 import FileDialog from "./components/FileDialog";
+import { clearProject, importImages, importMusic } from "./features/project";
 
 function App() {
     const audioManager = useContext(AudioContext);
@@ -101,7 +102,7 @@ function App() {
         totalAudioLength += audio.length;
         totalAudioPixelLength += audio.waveform ? audio.waveform.length : 0;
     });
-    const resolution = totalAudioLength > 0 ? totalAudioPixelLength / totalAudioLength : 0;
+    const resolution = totalAudioLength > 0 ? totalAudioPixelLength / totalAudioLength : 1;
 
     // Determine the currently previewed image
     let t = 0,
@@ -187,8 +188,7 @@ function App() {
                     // TODO: Implement
                 }}
                 onClose={() => setOpenProjectOpen(false)}
-                title="Choose project to open">
-            </FileDialog>
+                title="Choose project to open"></FileDialog>
 
             <FileDialog
                 open={saveProjectOpen}
@@ -196,34 +196,27 @@ function App() {
                     // TODO: Implement
                 }}
                 onClose={() => setSaveProjectOpen(false)}
-                title="Choose location to save the project">
-            </FileDialog>
+                title="Choose location to save the project"></FileDialog>
 
             <ConfirmDialog
                 open={resetDialogOpen}
-                onAccept={() => {
-                    // TODO: Implement
-                }}
+                onAccept={() => clearProject(setImages, setMusic)}
                 onClose={() => setResetDialogOpen(false)}
                 title="Are you sure you want to reset the workspace?"></ConfirmDialog>
 
             <FileDialog
                 open={importPicturesOpen}
-                onAccept={() => {
-                    // TODO: Implement
-                }}
+                accept="images"
+                onAccept={(files) => importImages(files, setImages)}
                 onClose={() => setImportPicturesOpen(false)}
-                title="Choose images to add to the project">
-            </FileDialog>
+                title="Choose images to add to the project"></FileDialog>
 
             <FileDialog
                 open={importMusicOpen}
-                onAccept={() => {
-                    // TODO: Implement
-                }}
+                accept="music"
+                onAccept={(files) => importMusic(files, setMusic)}
                 onClose={() => setImportMusicOpen(false)}
-                title="Choose music files to add to the project">
-            </FileDialog>
+                title="Choose music files to add to the project"></FileDialog>
         </Box>
     );
 }
