@@ -15,6 +15,7 @@ export function importImages(images, setAppImages) {
         const image = new Image();
         image.addEventListener("load", () => {
             // TODO: Duplicated logic from PreviewCanvas
+            // TODO: Add image immediately by URL and load later as music (not when previewed)
             const previewCanvas = new OffscreenCanvas(550, 550);
             drawCircularPreview(previewCanvas, image);
             setAppImages((current) => {
@@ -35,7 +36,25 @@ export function importImages(images, setAppImages) {
     }
 }
 
-export function importMusic(music, setAppMusic) {}
+export function importMusic(music, setAppMusic) {
+    for (let i = 0; i < music.length; i++) {
+        const objectURL = URL.createObjectURL(music[i]);
+        setAppMusic((current) => {
+            const id = getAvailableId(current);
+            return [
+                ...current,
+                {
+                    id: id,
+                    width: 250,
+                    audioURL: objectURL,
+                    audioBuffer: null,
+                    waveform: null,
+                    length: 0,
+                },
+            ];
+        });
+    }
+}
 
 function getAvailableId(array) {
     let id = array.length;

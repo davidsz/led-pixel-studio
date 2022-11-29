@@ -26,7 +26,6 @@ import { clearProject, importImages, importMusic } from "./features/project";
 function App() {
     const audioManager = useContext(AudioContext);
     const [drawerOpen, setDrawerOpen] = useState(false);
-    // TODO: Remove URL fields when the corresponding UI / project loader is done
     const [music, setMusic] = useState([
         {
             id: "0",
