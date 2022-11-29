@@ -3,6 +3,7 @@ import { styled } from "@mui/material/styles";
 import { useEffect, useId } from "react";
 import { initializeAudio, drawWaveform } from "../features/audio";
 import { makeElementResizable } from "../features/util";
+import { drawCircularPreview } from "../features/drawing";
 
 const devicePixelCount = 64;
 
@@ -44,7 +45,7 @@ const AudioPlaceholder = styled("div")(({ theme }) => ({
     backgroundColor: "white",
 }));
 
-function TimelineTrackItem({ itemData, type, onResizeEnd, onAudioInitialized, dndProvided, dndSnapshot }) {
+function TimelineTrackItem({ itemData, type, onResizeEnd, onImageInitialized, onAudioInitialized, dndProvided, dndSnapshot }) {
     const isImage = type === "image";
     const isAudio = type === "audio";
     const id = useId();
@@ -59,6 +60,15 @@ function TimelineTrackItem({ itemData, type, onResizeEnd, onAudioInitialized, dn
                     onResizeEnd(width);
                 },
             });
+
+            const image = new Image();
+            image.onload = () => {
+                // TODO: Magic numbers
+                const previewCanvas = new OffscreenCanvas(550, 550);
+                drawCircularPreview(previewCanvas, image);
+                onImageInitialized(image, previewCanvas);
+            };
+            image.src = itemData.imageUrl;
         } else if (isAudio) {
             initializeAudio(itemData.audioURL, (audioBuffer, waveform) => {
                 onAudioInitialized(audioBuffer, waveform);

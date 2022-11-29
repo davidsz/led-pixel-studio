@@ -7,13 +7,12 @@ const Track = styled("div")(({ theme }) => ({
     display: "flex",
     flexDirection: "row",
     width: "100%",
+    minHeight: "64px",
     marginBottom: "3px",
     backgroundColor: theme.palette.primary.main,
 }));
 
 function TimelineTrack({ items, setItems, type }) {
-    // const isAudioTrack = type === "audio";
-
     const onDragEnd = (result) => {
         if (!result.destination) return;
         setItems(reorderList(items, result.source.index, result.destination.index));
@@ -26,6 +25,20 @@ function TimelineTrack({ items, setItems, type }) {
                     return {
                         ...item,
                         width: width,
+                    };
+                else return item;
+            })
+        );
+    };
+
+    const onImageInitialized = (id, image, previewCanvas) => {
+        setItems((current) =>
+            current.map((item) => {
+                if (item.id === id)
+                    return {
+                        ...item,
+                        imageObj: image,
+                        circularPreview: previewCanvas,
                     };
                 else return item;
             })
@@ -59,6 +72,7 @@ function TimelineTrack({ items, setItems, type }) {
                                         itemData={item}
                                         type={type}
                                         onResizeEnd={(width) => onResizeEnd(item.id, width)}
+                                        onImageInitialized={(image, preview) => onImageInitialized(item.id, image, preview)}
                                         onAudioInitialized={(buffer, waveform) => onAudioInitialized(item.id, buffer, waveform)}
                                         dndProvided={provided}
                                         dndSnapshot={snapshot}

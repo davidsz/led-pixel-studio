@@ -1,38 +1,23 @@
-import { drawCircularPreview } from "./drawing";
-
-export function loadProject(directoryHandle, setImages, setMusic, pixelPerSecond) {}
+export function loadProject(directoryHandle, setImages, pixelPerSecond) {}
 
 export function saveProject(directoryHandle) {}
-
-export function clearProject(setImages, setMusic) {
-    setImages((_) => []);
-    setMusic((_) => []);
-}
 
 export function importImages(images, setAppImages) {
     for (let i = 0; i < images.length; i++) {
         const objectURL = URL.createObjectURL(images[i]);
-        const image = new Image();
-        image.addEventListener("load", () => {
-            // TODO: Duplicated logic from PreviewCanvas
-            // TODO: Add image immediately by URL and load later as music (not when previewed)
-            const previewCanvas = new OffscreenCanvas(550, 550);
-            drawCircularPreview(previewCanvas, image);
-            setAppImages((current) => {
-                const id = getAvailableId(current);
-                return [
-                    ...current,
-                    {
-                        id: id,
-                        width: 200,
-                        imageUrl: objectURL,
-                        imageObj: image,
-                        circularPreview: previewCanvas,
-                    },
-                ];
-            });
+        setAppImages((current) => {
+            const id = getAvailableId(current);
+            return [
+                ...current,
+                {
+                    id: id,
+                    width: 200,
+                    imageUrl: objectURL,
+                    imageObj: null,
+                    circularPreview: null,
+                },
+            ];
         });
-        image.src = objectURL;
     }
 }
 

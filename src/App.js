@@ -21,7 +21,7 @@ import MusicNoteIcon from "@mui/icons-material/MusicNote";
 import HomeIcon from "@mui/icons-material/Home";
 import ConfirmDialog from "./components/ConfirmDialog";
 import FileDialog from "./components/FileDialog";
-import { clearProject, importImages, importMusic } from "./features/project";
+import { importImages, importMusic } from "./features/project";
 
 function App() {
     const audioManager = useContext(AudioContext);
@@ -74,20 +74,6 @@ function App() {
     const [resetDialogOpen, setResetDialogOpen] = useState(false);
     const [importPicturesOpen, setImportPicturesOpen] = useState(false);
     const [importMusicOpen, setImportMusicOpen] = useState(false);
-
-    const handleImageLoaded = (id, image, preview) => {
-        setImages((current) =>
-            current.map((item) => {
-                if (item.id === id)
-                    return {
-                        ...item,
-                        imageObj: image,
-                        circularPreview: preview,
-                    };
-                else return item;
-            })
-        );
-    };
 
     const handleTimelineNavigation = (seconds, userInitiated) => {
         if (userInitiated) audioManager.seek(seconds);
@@ -169,7 +155,7 @@ function App() {
             <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
                 <DrawerHeader />
 
-                <PreviewCanvas currentImage={currentImage} imageLoaded={handleImageLoaded} />
+                <PreviewCanvas currentImage={currentImage} />
 
                 <Timeline
                     seconds={totalAudioLength}
@@ -199,7 +185,10 @@ function App() {
 
             <ConfirmDialog
                 open={resetDialogOpen}
-                onAccept={() => clearProject(setImages, setMusic)}
+                onAccept={() => {
+                    setImages((_) => []);
+                    setMusic((_) => []);
+                }}
                 onClose={() => setResetDialogOpen(false)}
                 title="Are you sure you want to reset the workspace?"></ConfirmDialog>
 
