@@ -15,9 +15,11 @@ function MediaControls({ musicTrack, onNavigation }) {
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     // Create one audio from timeline pieces only when they change/load
-    let audioBufferUpdateCond = JSON.stringify(musicTrack.map(m => {
-        return `${m.id}-${m?.audioBuffer?.length}`;
-    }));
+    let audioBufferUpdateCond = JSON.stringify(
+        musicTrack.map((m) => {
+            return `${m.id}-${m?.audioBuffer?.length}`;
+        })
+    );
     useEffect(() => {
         audioManager.updateAudioBuffer(musicTrack);
     }, [audioBufferUpdateCond]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -34,7 +36,7 @@ function MediaControls({ musicTrack, onNavigation }) {
 
     return (
         <>
-            <IconButton aria-label="previous">
+            <IconButton aria-label="previous" onClick={() => onNavigation(0, true)}>
                 <SkipPreviousIcon />
             </IconButton>
             <IconButton aria-label="play/pause" onClick={playPause}>
