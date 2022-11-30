@@ -155,7 +155,7 @@ function App() {
             <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
                 <DrawerHeader />
 
-                <PreviewCanvas currentImage={currentImage} />
+                <PreviewCanvas currentImage={currentImage} currentTime={currentTime} />
 
                 <Timeline
                     seconds={totalAudioLength}
@@ -186,6 +186,7 @@ function App() {
             <ConfirmDialog
                 open={resetDialogOpen}
                 onAccept={() => {
+                    audioManager.stop();
                     setImages((_) => []);
                     setMusic((_) => []);
                 }}

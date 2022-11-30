@@ -11,20 +11,23 @@ const style = {
     top: "80px",
 };
 
-function PreviewCanvas({ currentImage }) {
+function PreviewCanvas({ currentImage, currentTime }) {
     useEffect(() => {
-        if (!currentImage) {
-            clearCanvas(document.getElementById("preview-canvas"));
-            return;
-        }
+        const canvas = document.getElementById("preview-canvas");
+        clearCanvas(canvas);
+        if (!currentImage) return;
+
         if (currentImage.circularPreview) {
-            // Image is already loaded and preview has been generated
-            const destCtx = document.getElementById("preview-canvas").getContext("2d");
+            const destCtx = canvas.getContext("2d");
+            const middle = canvas.width / 2;
+            destCtx.translate(middle, middle);
+            destCtx.rotate((Math.PI / 180) * 0.5);
+            destCtx.translate(-middle, -middle);
             destCtx.drawImage(currentImage.circularPreview, 0, 0);
         } else {
             // TODO: Consider drawing a general placeholder
         }
-    }, [currentImage]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [currentImage, currentTime]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <>
