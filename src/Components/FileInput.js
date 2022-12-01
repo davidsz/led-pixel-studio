@@ -15,16 +15,32 @@ function FileInput({ accept, onChange }) {
     if (attachment && attachment.length === 1) nameToDisplay = attachment[0].name;
     else if (attachment && attachment.length > 1) nameToDisplay = "Multiple selected";
 
-    let acceptType = "";
+    let acceptType = null
+    let webkitDirectory = null;
+    let directory = null;
+    let multiple = null;
     if (accept === "images") acceptType = "image/*";
     else if (accept === "music") acceptType = "audio/*";
+    else if (accept === "directory") {
+        webkitDirectory = "";
+        directory = "";
+        multiple = "";
+    }
 
     return (
         <Button component="label" color="inherit" sx={{ mt: 3 }}>
             <Stack spacing={2} direction="row" alignItems="center">
                 <InsertDriveFileIcon color="inherit" />
                 <Typography noWrap>{nameToDisplay}</Typography>
-                <input type="file" hidden multiple accept={acceptType} onChange={handleChange} />
+                <input
+                    type="file"
+                    hidden
+                    multiple={multiple}
+                    accept={acceptType}
+                    webkitdirectory={webkitDirectory}
+                    directory={directory}
+                    onChange={handleChange}
+                />
             </Stack>
         </Button>
     );

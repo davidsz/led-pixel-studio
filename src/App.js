@@ -21,7 +21,7 @@ import MusicNoteIcon from "@mui/icons-material/MusicNote";
 import HomeIcon from "@mui/icons-material/Home";
 import ConfirmDialog from "./components/ConfirmDialog";
 import FileDialog from "./components/FileDialog";
-import { importImages, importMusic } from "./features/project";
+import { importImages, importMusic, loadProject } from "./features/project";
 
 function App() {
     const audioManager = useContext(AudioContext);
@@ -87,7 +87,7 @@ function App() {
         totalAudioLength += audio.length;
         totalAudioPixelLength += audio.waveform ? audio.waveform.length : 0;
     });
-    const resolution = totalAudioLength > 0 ? totalAudioPixelLength / totalAudioLength : 1;
+    const resolution = totalAudioLength > 0 ? totalAudioPixelLength / totalAudioLength : 50;
 
     // Determine the currently previewed image
     let t = 0,
@@ -169,9 +169,8 @@ function App() {
 
             <FileDialog
                 open={openProjectOpen}
-                onAccept={() => {
-                    // TODO: Implement
-                }}
+                accept="directory"
+                onAccept={(files) => loadProject(files, setImages, resolution)}
                 onClose={() => setOpenProjectOpen(false)}
                 title="Choose project to open"></FileDialog>
 
