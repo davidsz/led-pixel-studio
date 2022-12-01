@@ -17,21 +17,20 @@ export function loadProject(files, setAppImages, pixelPerSecond) {
     }
 
     if (!programFile) {
-        // Load all images found
-        for (let i = 0; i < imageFiles.length; i++) importImage(imageFiles[i], setAppImages);
+        // Load all images found with the default 6 sec length
+        for (let i = 0; i < imageFiles.length; i++) importImage(imageFiles[i], setAppImages, 6 * pixelPerSecond);
     } else {
         // Load only the mentioned images with proper timing
         parseProgramFile(programFile).then((steps) => {
-            let lastTime = parseTimeFormat("00:00:00");
-            for (let i = 0; i < steps.length; i++) {
-                let step = steps[i];
+            // We expect at least one image and Finish
+            if (steps.length < 2) return;
+            let lastTime = parseTimeFormat(steps[0].time);
+            for (let i = 1; i < steps.length; i++) {
+                // Check if mentioned image file exists before including it
                 for (let j = 0; j < imageFiles.length; j++) {
-                    if (imageFiles[j].webkitRelativePath.endsWith(step.fileName)) {
-                        // FIXME: Not correct. We should calculate length from the start of the next image.
-                        // FIXME: Support "Finish" step.
-                        let time = parseTimeFormat(step.time);
-                        let sec = getSecDifference(lastTime, time);
-                        importImage(imageFiles[j], setAppImages, sec * pixelPerSecond);
+                    if (imageFiles[j].webkitRelativePath.endsWith(steps[i - 1].fileName)) {
+                        let time = parseTimeFormat(steps[i].time);
+                        importImage(imageFiles[j], setAppImages, getSecDifference(lastTime, time) * pixelPerSecond);
                         lastTime = time;
                         break;
                     }
