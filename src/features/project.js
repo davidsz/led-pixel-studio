@@ -41,13 +41,25 @@ export function loadProject(files, setAppImages, pixelPerSecond) {
 }
 
 export async function saveProject(dirHandle, appImages, pixelPerSecond) {
-    return;
+    // Generate program.txt
     let programFileHandle = await dirHandle.getFileHandle("program.txt", { create: true });
     const fileStream = await programFileHandle.createWritable();
-    // TODO: Write program
-    let programText = "";
+    const numImages = appImages.length;
+    let currentSec = 0;
+    // TODO: Figure out what is (1.2) at the end of first line
+    let programText = `${appImages[0].id} - ${getTimestampFromSecond(currentSec)} (1.2)\r\n`;
+    for (let i = 1; i < numImages; i++) {
+        currentSec += appImages[i - 1].width / pixelPerSecond;
+        programText += `${appImages[i].id} - ${getTimestampFromSecond(currentSec)}\r\n`;
+    }
+    programText += `Finish - ${getTimestampFromSecond(currentSec + appImages[numImages - 1].width / pixelPerSecond)}\r\n`;
+    // TODO: Make these configurable
+    programText += "Repeat after finish - yes\r\n";
+    programText += "Lock buttons - no\r\n";
     await fileStream.write(new Blob([programText], { type: "text/plain" }));
     await fileStream.close();
+
+    return;
 
     for (let i = 0; i < appImages.length; i++) {
         let image = appImages[i];
@@ -128,6 +140,21 @@ function getSecDifference(prevTime, time) {
     let seconds = time.sec - prevTime.sec;
     let hundredths = time.hun - prevTime.hun;
     return minutes * 60 + seconds + hundredths / 100;
+}
+
+function getTimestampFromSecond(sec) {
+    let minutes = Math.trunc(sec / 60);
+    if (minutes < 10) minutes = `0${minutes}`;
+    sec -= minutes * 60;
+
+    let seconds = Math.trunc(sec);
+    if (seconds < 10) seconds = `0${seconds}`;
+    sec -= Math.trunc(sec);
+
+    let hundredths = Math.trunc(sec * 100);
+    if (hundredths < 10) hundredths = `0${hundredths}`;
+
+    return `${minutes}:${seconds}:${hundredths}`;
 }
 
 function parseProgramFile(file) {
