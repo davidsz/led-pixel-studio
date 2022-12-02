@@ -40,7 +40,28 @@ export function loadProject(files, setAppImages, pixelPerSecond) {
     }
 }
 
-export function saveProject(directoryHandle) {}
+export async function saveProject(dirHandle, appImages, pixelPerSecond) {
+    return;
+    let programFileHandle = await dirHandle.getFileHandle("program.txt", { create: true });
+    const fileStream = await programFileHandle.createWritable();
+    // TODO: Write program
+    let programText = "";
+    await fileStream.write(new Blob([programText], { type: "text/plain" }));
+    await fileStream.close();
+
+    for (let i = 0; i < appImages.length; i++) {
+        let image = appImages[i];
+        let imageFileHandle = await dirHandle.getFileHandle(`${image.id}.bmp`, { create: true });
+        const fileStream = await imageFileHandle.createWritable();
+        // TODO: Save BMP images
+        // https://stackoverflow.com/questions/64378896/is-it-possible-to-convert-jpg-images-to-bmp
+        // Maybe store it as blob?
+        // https://stackoverflow.com/questions/42471755/convert-image-into-blob-using-javascript
+        let imageBlob = null;
+        await fileStream.write(imageBlob);
+        await fileStream.close();
+    }
+}
 
 function importImage(image, setAppImages, pixelWidth = 200) {
     setAppImages((current) => {

@@ -21,7 +21,7 @@ import MusicNoteIcon from "@mui/icons-material/MusicNote";
 import HomeIcon from "@mui/icons-material/Home";
 import ConfirmDialog from "./components/ConfirmDialog";
 import FileDialog from "./components/FileDialog";
-import { importImages, importMusic, loadProject } from "./features/project";
+import { importImages, importMusic, loadProject, saveProject } from "./features/project";
 
 function App() {
     const audioManager = useContext(AudioContext);
@@ -123,7 +123,9 @@ function App() {
                         open={drawerOpen}
                         text={"Save project"}
                         icon={<SaveRoundedIcon />}
-                        onClick={() => setSaveProjectOpen(true)}
+                        onClick={async () =>
+                            saveProject(await window.showDirectoryPicker({ mode: "readwrite" }), images, resolution)
+                        }
                     />
                     <DrawerMenuitem
                         open={drawerOpen}
