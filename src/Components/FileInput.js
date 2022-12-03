@@ -15,16 +15,14 @@ function FileInput({ accept, onChange }) {
     if (attachment && attachment.length === 1) nameToDisplay = attachment[0].name;
     else if (attachment && attachment.length > 1) nameToDisplay = "Multiple selected";
 
-    let acceptType = null
+    let acceptType = null;
     let webkitDirectory = null;
     let directory = null;
-    let multiple = null;
     if (accept === "images") acceptType = "image/*";
     else if (accept === "music") acceptType = "audio/*";
     else if (accept === "directory") {
         webkitDirectory = "";
         directory = "";
-        multiple = "";
     }
 
     return (
@@ -35,7 +33,7 @@ function FileInput({ accept, onChange }) {
                 <input
                     type="file"
                     hidden
-                    multiple={multiple}
+                    multiple
                     accept={acceptType}
                     webkitdirectory={webkitDirectory}
                     directory={directory}

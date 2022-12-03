@@ -1,7 +1,7 @@
 import { CanvasToBMP } from "./bmp";
 
-const lineSeparator = navigator.userAgentData.platform === "Windows" ? "\r\n" : "\n";
-const pathSeparator = navigator.userAgentData.platform === "Windows" ? "\\" : "/";
+const lineSeparator = "\n";
+const pathSeparator = "/";
 
 export function loadProject(files, setAppImages, pixelPerSecond) {
     let programFile = null;

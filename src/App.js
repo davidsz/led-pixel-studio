@@ -26,51 +26,10 @@ import { importImages, importMusic, loadProject, saveProject } from "./features/
 function App() {
     const audioManager = useContext(AudioContext);
     const [drawerOpen, setDrawerOpen] = useState(false);
-    const [music, setMusic] = useState([
-        {
-            id: "0",
-            width: 250,
-            audioURL: "sample/07023003.mp3",
-            audioBuffer: null,
-            waveform: null,
-            length: 0,
-        },
-        {
-            id: "1",
-            width: 250,
-            audioURL: "sample/Yodel_Sound_Effect.mp3",
-            audioBuffer: null,
-            waveform: null,
-            length: 0,
-        },
-    ]);
-    const [images, setImages] = useState([
-        {
-            id: "0",
-            width: 300,
-            imageUrl: "sample/sample1.png",
-            imageObj: null,
-            circularPreview: null,
-        },
-        {
-            id: "1",
-            width: 200,
-            imageUrl: "sample/sample2.png",
-            imageObj: null,
-            circularPreview: null,
-        },
-        {
-            id: "2",
-            width: 500,
-            imageUrl: "sample/sample3.png",
-            imageObj: null,
-            circularPreview: null,
-        },
-    ]);
+    const [music, setMusic] = useState([]);
+    const [images, setImages] = useState([]);
     const [currentTime, setCurrentTime] = useState(0);
-
     const [openProjectOpen, setOpenProjectOpen] = useState(false);
-    const [saveProjectOpen, setSaveProjectOpen] = useState(false);
     const [resetDialogOpen, setResetDialogOpen] = useState(false);
     const [importPicturesOpen, setImportPicturesOpen] = useState(false);
     const [importMusicOpen, setImportMusicOpen] = useState(false);
@@ -179,14 +138,6 @@ function App() {
                 onAccept={(files) => loadProject(files, setImages, resolution)}
                 onClose={() => setOpenProjectOpen(false)}
                 title="Choose project to open"></FileDialog>
-
-            <FileDialog
-                open={saveProjectOpen}
-                onAccept={() => {
-                    // TODO: Implement
-                }}
-                onClose={() => setSaveProjectOpen(false)}
-                title="Choose location to save the project"></FileDialog>
 
             <ConfirmDialog
                 open={resetDialogOpen}
