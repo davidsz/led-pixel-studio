@@ -1,0 +1,10 @@
+{
+  "files": {
+    "main.js": "/led-pixel-studio/static/js/main.b24d1b0a.js",
+    "index.html": "/led-pixel-studio/index.html",
+    "main.b24d1b0a.js.map": "/led-pixel-studio/static/js/main.b24d1b0a.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.b24d1b0a.js"
+  ]
+}
