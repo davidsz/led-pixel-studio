@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { AudioContext } from ".";
 import Box from "@mui/material/Box";
 import List from "@mui/material/List";
@@ -74,6 +74,10 @@ function App() {
     const [resetDialogOpen, setResetDialogOpen] = useState(false);
     const [importPicturesOpen, setImportPicturesOpen] = useState(false);
     const [importMusicOpen, setImportMusicOpen] = useState(false);
+
+    useEffect(() => {
+        document.addEventListener("contextmenu", (event) => event.preventDefault());
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const handleTimelineNavigation = (seconds, userInitiated) => {
         if (userInitiated) audioManager.seek(seconds);

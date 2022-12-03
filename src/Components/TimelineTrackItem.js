@@ -1,9 +1,11 @@
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, ListItemIcon, ListItemText } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { useEffect, useId } from "react";
+import { useEffect, useId, useState } from "react";
 import { initializeAudio, drawWaveform } from "../features/audio";
 import { makeElementResizable } from "../features/util";
 import { drawCircularPreview } from "../features/drawing";
+import { Menu, MenuItem } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const devicePixelCount = 64;
 
@@ -45,14 +47,24 @@ const AudioPlaceholder = styled("div")(({ theme }) => ({
     backgroundColor: "white",
 }));
 
-function TimelineTrackItem({ itemData, type, onResizeEnd, onImageInitialized, onAudioInitialized, dndProvided, dndSnapshot }) {
+function TimelineTrackItem({
+    itemData,
+    type,
+    onResizeEnd,
+    onImageInitialized,
+    onAudioInitialized,
+    onItemRemove,
+    dndProvided,
+    dndSnapshot,
+}) {
     const isImage = type === "image";
     const isAudio = type === "audio";
     const id = useId();
+    const [menuOpen, setMenuOpen] = useState(false);
 
     useEffect(() => {
+        let element = document.getElementById(id);
         if (isImage) {
-            let element = document.getElementById(id);
             let handle = document.getElementById(`${id}-handle`);
             makeElementResizable(element, handle, {
                 horizontal: true,
@@ -74,45 +86,80 @@ function TimelineTrackItem({ itemData, type, onResizeEnd, onImageInitialized, on
                 onAudioInitialized(audioBuffer, waveform);
             });
         }
+
+        element.addEventListener("contextmenu", handleContextMenu);
+        return () => element.removeEventListener("contextmenu", handleContextMenu);
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         if (isAudio && itemData.waveform !== null) drawWaveform(document.getElementById(`${id}-canvas`), itemData.waveform);
     });
 
+    const handleContextMenu = (e) => {
+        e.preventDefault();
+        setMenuOpen(true);
+    };
+
+    const removeAction = () => {
+        setMenuOpen(false);
+        onItemRemove();
+    }
+
     return (
-        <TrackItemOuter
-            ref={dndProvided.innerRef}
-            {...dndProvided.draggableProps}
-            id={id}
-            style={{
-                width: `${itemData.waveform ? itemData.waveform.length : itemData.width}px`,
-                height: `${devicePixelCount}px`,
-                ...dndProvided.draggableProps.style,
-            }}>
-            {isImage && (
-                <>
-                    <ImagePreview style={{ backgroundImage: `url(${itemData.imageUrl})` }} {...dndProvided.dragHandleProps} />
-                    <ImageResizeHandle id={`${id}-handle`} />
-                </>
-            )}
-            {isAudio && (
-                <>
-                    {itemData.waveform !== null ? (
-                        <AudioPreview
-                            id={`${id}-canvas`}
-                            width={itemData.waveform ? itemData.waveform.length : itemData.width}
-                            height={devicePixelCount}
-                            {...dndProvided.dragHandleProps}
-                        />
-                    ) : (
-                        <AudioPlaceholder {...dndProvided.dragHandleProps}>
-                            <CircularProgress color="secondary" />
-                        </AudioPlaceholder>
-                    )}
-                </>
-            )}
-        </TrackItemOuter>
+        <>
+            <TrackItemOuter
+                ref={dndProvided.innerRef}
+                {...dndProvided.draggableProps}
+                id={id}
+                style={{
+                    width: `${itemData.waveform ? itemData.waveform.length : itemData.width}px`,
+                    height: `${devicePixelCount}px`,
+                    ...dndProvided.draggableProps.style,
+                }}>
+                {isImage && (
+                    <>
+                        <ImagePreview style={{ backgroundImage: `url(${itemData.imageUrl})` }} {...dndProvided.dragHandleProps} />
+                        <ImageResizeHandle id={`${id}-handle`} />
+                    </>
+                )}
+                {isAudio && (
+                    <>
+                        {itemData.waveform !== null ? (
+                            <AudioPreview
+                                id={`${id}-canvas`}
+                                width={itemData.waveform ? itemData.waveform.length : itemData.width}
+                                height={devicePixelCount}
+                                {...dndProvided.dragHandleProps}
+                            />
+                        ) : (
+                            <AudioPlaceholder {...dndProvided.dragHandleProps}>
+                                <CircularProgress color="secondary" />
+                            </AudioPlaceholder>
+                        )}
+                    </>
+                )}
+            </TrackItemOuter>
+
+            <Menu
+                anchorEl={document.getElementById(id)}
+                anchorOrigin={{
+                    vertical: "center",
+                    horizontal: "center",
+                }}
+                transformOrigin={{
+                    vertical: "center",
+                    horizontal: "center",
+                }}
+                open={menuOpen}
+                onClose={() => setMenuOpen(false)}>
+                <MenuItem onClick={removeAction}>
+                    <ListItemIcon>
+                        <DeleteIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Remove</ListItemText>
+                </MenuItem>
+            </Menu>
+        </>
     );
 }
 

@@ -60,6 +60,14 @@ function TimelineTrack({ items, setItems, type }) {
         );
     };
 
+    const onItemRemove = (id) => {
+        setItems((current) =>
+            current.filter((item) => {
+                return item.id !== id;
+            })
+        );
+    };
+
     return (
         <DragDropContext onDragEnd={onDragEnd}>
             <Droppable droppableId="droppable" direction="horizontal">
@@ -74,6 +82,7 @@ function TimelineTrack({ items, setItems, type }) {
                                         onResizeEnd={(width) => onResizeEnd(item.id, width)}
                                         onImageInitialized={(image, preview) => onImageInitialized(item.id, image, preview)}
                                         onAudioInitialized={(buffer, waveform) => onAudioInitialized(item.id, buffer, waveform)}
+                                        onItemRemove={() => onItemRemove(item.id)}
                                         dndProvided={provided}
                                         dndSnapshot={snapshot}
                                     />
