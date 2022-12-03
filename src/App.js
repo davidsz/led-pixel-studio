@@ -19,19 +19,15 @@ import RestartAltRoundedIcon from "@mui/icons-material/RestartAltRounded";
 import ImageRoundedIcon from "@mui/icons-material/ImageRounded";
 import MusicNoteIcon from "@mui/icons-material/MusicNote";
 import HomeIcon from "@mui/icons-material/Home";
-import ConfirmDialog from "./components/ConfirmDialog";
-import FileDialog from "./components/FileDialog";
 import { importImages, importMusic, loadProject, saveProject } from "./features/project";
 
 function App() {
     const audioManager = useContext(AudioContext);
+
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [music, setMusic] = useState([]);
     const [images, setImages] = useState([]);
     const [currentTime, setCurrentTime] = useState(0);
-    const [resetDialogOpen, setResetDialogOpen] = useState(false);
-    const [importPicturesOpen, setImportPicturesOpen] = useState(false);
-    const [importMusicOpen, setImportMusicOpen] = useState(false);
 
     useEffect(() => {
         document.addEventListener("contextmenu", (event) => event.preventDefault());
@@ -95,7 +91,13 @@ function App() {
                         open={drawerOpen}
                         text={"Clear"}
                         icon={<RestartAltRoundedIcon />}
-                        onClick={() => setResetDialogOpen(true)}
+                        onClick={() => {
+                            if (window.confirm("Are you sure you want to restart this project?") === true) {
+                                audioManager.stop();
+                                setImages((_) => []);
+                                setMusic((_) => []);
+                            }
+                        }}
                     />
                 </List>
                 <Divider />
@@ -104,13 +106,41 @@ function App() {
                         open={drawerOpen}
                         text={"Import pictures"}
                         icon={<ImageRoundedIcon />}
-                        onClick={() => setImportPicturesOpen(true)}
+                        onClick={async () => {
+                            const pickerOpts = {
+                                types: [
+                                    {
+                                        description: "Images",
+                                        accept: {
+                                            "image/*": [],
+                                        },
+                                    },
+                                ],
+                                excludeAcceptAllOption: true,
+                                multiple: true,
+                            };
+                            importImages(await window.showOpenFilePicker(pickerOpts), setImages);
+                        }}
                     />
                     <DrawerMenuitem
                         open={drawerOpen}
                         text={"Import music"}
                         icon={<MusicNoteIcon />}
-                        onClick={() => setImportMusicOpen(true)}
+                        onClick={async () => {
+                            const pickerOpts = {
+                                types: [
+                                    {
+                                        description: "Audio",
+                                        accept: {
+                                            "audio/*": [],
+                                        },
+                                    },
+                                ],
+                                excludeAcceptAllOption: true,
+                                multiple: true,
+                            };
+                            importMusic(await window.showOpenFilePicker(pickerOpts), setMusic);
+                        }}
                     />
                 </List>
                 <Divider />
@@ -132,30 +162,6 @@ function App() {
                     <TimelineTrack type="image" items={images} setItems={setImages} />
                 </Timeline>
             </Box>
-
-            <ConfirmDialog
-                open={resetDialogOpen}
-                onAccept={() => {
-                    audioManager.stop();
-                    setImages((_) => []);
-                    setMusic((_) => []);
-                }}
-                onClose={() => setResetDialogOpen(false)}
-                title="Are you sure you want to reset the workspace?"></ConfirmDialog>
-
-            <FileDialog
-                open={importPicturesOpen}
-                accept="images"
-                onAccept={(files) => importImages(files, setImages)}
-                onClose={() => setImportPicturesOpen(false)}
-                title="Choose images to add to the project"></FileDialog>
-
-            <FileDialog
-                open={importMusicOpen}
-                accept="music"
-                onAccept={(files) => importMusic(files, setMusic)}
-                onClose={() => setImportMusicOpen(false)}
-                title="Choose music files to add to the project"></FileDialog>
         </Box>
     );
 }

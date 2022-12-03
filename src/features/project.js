@@ -93,12 +93,16 @@ function importImage(image, setAppImages, pixelWidth = 200) {
     });
 }
 
-export function importImages(images, setAppImages) {
-    for (let i = 0; i < images.length; i++) importImage(images[i], setAppImages, 200);
+export async function importImages(fileHandles, setAppImages) {
+    for (let i = 0; i < fileHandles.length; i++) {
+        const imageFile = await fileHandles[i].getFile();
+        importImage(imageFile, setAppImages, 200);
+    }
 }
 
-export function importMusic(music, setAppMusic) {
-    for (let i = 0; i < music.length; i++) {
+export async function importMusic(fileHandles, setAppMusic) {
+    for (let i = 0; i < fileHandles.length; i++) {
+        const audioFile = await fileHandles[i].getFile();
         setAppMusic((current) => {
             const id = getAvailableId(current);
             return [
@@ -106,7 +110,7 @@ export function importMusic(music, setAppMusic) {
                 {
                     id: id,
                     width: 250,
-                    audioURL: URL.createObjectURL(music[i]),
+                    audioURL: URL.createObjectURL(audioFile),
                     audioBuffer: null,
                     waveform: null,
                     length: 0,
