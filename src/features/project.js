@@ -1,3 +1,5 @@
+import { CanvasToBMP } from "./bmp";
+
 const lineSeparator = navigator.userAgentData.platform === "Windows" ? "\r\n" : "\n";
 const pathSeparator = navigator.userAgentData.platform === "Windows" ? "\\" : "/";
 
@@ -59,18 +61,18 @@ export async function saveProject(dirHandle, appImages, pixelPerSecond) {
     await fileStream.write(new Blob([programText], { type: "text/plain" }));
     await fileStream.close();
 
-    return;
-
-    for (let i = 0; i < appImages.length; i++) {
+    // Generate image files
+    for (let i = 0; i < numImages; i++) {
         let image = appImages[i];
         let imageFileHandle = await dirHandle.getFileHandle(`${image.id}.bmp`, { create: true });
         const fileStream = await imageFileHandle.createWritable();
-        // TODO: Save BMP images
-        // https://stackoverflow.com/questions/64378896/is-it-possible-to-convert-jpg-images-to-bmp
-        // Maybe store it as blob?
-        // https://stackoverflow.com/questions/42471755/convert-image-into-blob-using-javascript
-        let imageBlob = null;
-        await fileStream.write(imageBlob);
+
+        // TODO: Maybe store in another format to avoid the canvas step here?
+        const tempCanvas = new OffscreenCanvas(image.imageObj.width, image.imageObj.height);
+        const tempContext = tempCanvas.getContext("2d");
+        tempContext.drawImage(image.imageObj, 0, 0);
+
+        await fileStream.write(CanvasToBMP.toBlob(tempCanvas));
         await fileStream.close();
     }
 }
