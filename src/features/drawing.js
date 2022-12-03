@@ -27,8 +27,8 @@ export function drawCircularPreview(canvasElement, image) {
         endArc = 0;
 
     // Calculate number of sections from image width/height ratio
-    const ratio = Math.round(image.width / image.height);
-    const numSection = Math.round(convertInterval(ratio, [0.5, 2], [20, 3]));
+    const ratio = (image.width / image.height).toFixed(1);
+    const numSection = Math.round(convertInterval(ratio, [0.3, 2], [17, 4]));
 
     const sectionArc = (2 * Math.PI) / numSection;
     const pixelArc = sectionArc / image.width;

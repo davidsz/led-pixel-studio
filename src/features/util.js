@@ -9,7 +9,7 @@ export function reorderList(list, startIndex, endIndex) {
 export function convertInterval(value, from, to) {
     if (value < from[0]) value = from[0];
     if (value > from[1]) value = from[1];
-    return ((value - from[0]) * (to[0] - to[1])) / (from[1] - from[0]) + to[1];
+    return to[0] + ((to[1] - to[0]) / (from[1] - from[0])) * (value - from[0]);
 }
 
 export function makeElementResizable(
