@@ -1,39 +1,38 @@
 import { CanvasToBMP } from "./bmp";
 
-const lineSeparator = "\n";
-const pathSeparator = "/";
-
-export function loadProject(files, setAppImages, pixelPerSecond) {
+export async function loadProject(dirHandle, setAppImages, pixelPerSecond) {
     let programFile = null;
     let imageFiles = [];
-    for (let i = 0; i < files.length; i++) {
-        let pathComponent = files[i].webkitRelativePath.split(pathSeparator);
-        if (pathComponent[1] === "program.txt") {
-            programFile = files[i];
+    for await (const [name, value] of dirHandle.entries()) {
+        if (name === "program.txt") {
+            programFile = await value.getFile();
             continue;
         }
-        if (pathComponent[1].endsWith(".bmp")) {
-            imageFiles.push(files[i]);
+        if (name.endsWith(".bmp")) {
+            imageFiles.push({ name, value });
             continue;
         }
     }
 
     if (!programFile) {
         // Load all images found with the default 6 sec length
-        for (let i = 0; i < imageFiles.length; i++) importImage(imageFiles[i], setAppImages, 6 * pixelPerSecond);
+        for (let i = 0; i < imageFiles.length; i++) {
+            const imageFile = await imageFiles[i].value.getFile();
+            importImage(imageFile, setAppImages, 6 * pixelPerSecond);
+        }
     } else {
         // Load only the mentioned images with proper timing
-        parseProgramFile(programFile).then((steps) => {
+        parseProgramFile(programFile).then(async (steps) => {
             // We expect at least one image and Finish
             if (steps.length < 2) return;
             let lastTime = parseTimeFormat(steps[0].time);
             for (let i = 1; i < steps.length; i++) {
                 // Check if mentioned image file exists before including it
                 for (let j = 0; j < imageFiles.length; j++) {
-                    const fileName = imageFiles[j].webkitRelativePath.split(pathSeparator).pop();
-                    if (fileName === steps[i - 1].fileName) {
-                        let time = parseTimeFormat(steps[i].time);
-                        importImage(imageFiles[j], setAppImages, getSecDifference(lastTime, time) * pixelPerSecond);
+                    if (imageFiles[j].name === steps[i - 1].fileName) {
+                        const time = parseTimeFormat(steps[i].time);
+                        const imageFile = await imageFiles[j].value.getFile();
+                        importImage(imageFile, setAppImages, getSecDifference(lastTime, time) * pixelPerSecond);
                         lastTime = time;
                         break;
                     }
@@ -170,7 +169,7 @@ function parseProgramFile(file) {
     }).then((fileContent) => {
         // Parse content
         let ret = [];
-        let lines = fileContent.split(lineSeparator);
+        let lines = fileContent.split("\n");
         for (let i = 0; i < lines.length; i++) {
             let parts = lines[i].split(" - ");
             if (parts.length < 2) continue;

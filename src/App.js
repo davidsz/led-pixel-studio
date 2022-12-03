@@ -29,7 +29,6 @@ function App() {
     const [music, setMusic] = useState([]);
     const [images, setImages] = useState([]);
     const [currentTime, setCurrentTime] = useState(0);
-    const [openProjectOpen, setOpenProjectOpen] = useState(false);
     const [resetDialogOpen, setResetDialogOpen] = useState(false);
     const [importPicturesOpen, setImportPicturesOpen] = useState(false);
     const [importMusicOpen, setImportMusicOpen] = useState(false);
@@ -80,7 +79,9 @@ function App() {
                         open={drawerOpen}
                         text={"Load project"}
                         icon={<RestorePageRoundedIcon />}
-                        onClick={() => setOpenProjectOpen(true)}
+                        onClick={async () =>
+                            loadProject(await window.showDirectoryPicker({ mode: "read" }), setImages, resolution)
+                        }
                     />
                     <DrawerMenuitem
                         open={drawerOpen}
@@ -131,13 +132,6 @@ function App() {
                     <TimelineTrack type="image" items={images} setItems={setImages} />
                 </Timeline>
             </Box>
-
-            <FileDialog
-                open={openProjectOpen}
-                accept="directory"
-                onAccept={(files) => loadProject(files, setImages, resolution)}
-                onClose={() => setOpenProjectOpen(false)}
-                title="Choose project to open"></FileDialog>
 
             <ConfirmDialog
                 open={resetDialogOpen}
