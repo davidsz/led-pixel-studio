@@ -30,7 +30,8 @@ export function loadProject(files, setAppImages, pixelPerSecond) {
             for (let i = 1; i < steps.length; i++) {
                 // Check if mentioned image file exists before including it
                 for (let j = 0; j < imageFiles.length; j++) {
-                    if (imageFiles[j].webkitRelativePath.endsWith(steps[i - 1].fileName)) {
+                    const fileName = imageFiles[j].webkitRelativePath.split(pathSeparator).pop();
+                    if (fileName === steps[i - 1].fileName) {
                         let time = parseTimeFormat(steps[i].time);
                         importImage(imageFiles[j], setAppImages, getSecDifference(lastTime, time) * pixelPerSecond);
                         lastTime = time;
