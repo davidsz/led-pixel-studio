@@ -38,25 +38,23 @@ function App() {
         setCurrentTime(seconds);
     };
 
-    // TODO: Implement this in AudioContext
+    // Calculate timeline length in seconds
     let totalAudioLength = 0;
     music.forEach((audio) => {
         totalAudioLength += audio.length;
     });
 
-    // Determine the currently previewed image
-    let t = 0,
+    // Also determine the currently previewed image
+    let currentImageEnd = 0,
         currentImageIndex = -1;
     for (let i = 0; i < images.length; i++) {
-        let prevT = t;
-        t += images[i].width / _resolution;
-        if (prevT <= currentTime && t > currentTime) {
-            currentImageIndex = i;
-            break;
-        }
+        const prevImageEnd = currentImageEnd;
+        currentImageEnd += images[i].width / _resolution;
+        if (prevImageEnd <= currentTime && currentImageEnd > currentTime) currentImageIndex = i;
     }
-    if (t < currentTime) currentImageIndex = -1;
-    let currentImage = currentImageIndex > -1 ? images[currentImageIndex] : null;
+    if (currentImageEnd < currentTime) currentImageIndex = -1;
+    const currentImage = currentImageIndex > -1 ? images[currentImageIndex] : null;
+    const totalTimelineLength = Math.max(totalAudioLength, currentImageEnd);
 
     return (
         <Box sx={{ display: "flex" }}>
@@ -72,17 +70,13 @@ function App() {
                         open={drawerOpen}
                         text={"Load project"}
                         icon={<RestorePageRoundedIcon />}
-                        onClick={async () =>
-                            loadProject(await window.showDirectoryPicker({ mode: "read" }), setImages)
-                        }
+                        onClick={async () => loadProject(await window.showDirectoryPicker({ mode: "read" }), setImages)}
                     />
                     <DrawerMenuitem
                         open={drawerOpen}
                         text={"Save project"}
                         icon={<SaveRoundedIcon />}
-                        onClick={async () =>
-                            saveProject(await window.showDirectoryPicker({ mode: "readwrite" }), images)
-                        }
+                        onClick={async () => saveProject(await window.showDirectoryPicker({ mode: "readwrite" }), images)}
                     />
                     <DrawerMenuitem
                         open={drawerOpen}
@@ -150,10 +144,7 @@ function App() {
 
                 <PreviewCanvas currentImage={currentImage} currentTime={currentTime} />
 
-                <Timeline
-                    seconds={totalAudioLength}
-                    currentTime={currentTime}
-                    onNavigation={handleTimelineNavigation}>
+                <Timeline seconds={totalTimelineLength} currentTime={currentTime} onNavigation={handleTimelineNavigation}>
                     <TimelineTrack type="audio" items={music} setItems={setMusic} />
                     <TimelineTrack type="image" items={images} setItems={setImages} />
                 </Timeline>
