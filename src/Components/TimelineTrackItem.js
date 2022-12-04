@@ -28,6 +28,8 @@ const ImageResizeHandle = styled("div")(({ theme }) => ({
     height: `${devicePixelCount}px`,
     flexShrink: 0,
     backgroundColor: theme.palette._imageResizeHandleColor,
+    borderRight: "#778899 2px solid",
+    borderLeft: "#778899 2px solid",
     cursor: "col-resize",
 }));
 
@@ -103,7 +105,7 @@ function TimelineTrackItem({
     const removeAction = () => {
         setMenuOpen(false);
         onItemRemove();
-    }
+    };
 
     return (
         <>

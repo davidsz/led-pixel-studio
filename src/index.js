@@ -17,7 +17,7 @@ const theme = createTheme({
         _cursorColor: "maroon",
         _timetrackColor: "#778899",
         _trackItemColor: "#5F9EA0",
-        _imageResizeHandleColor: "black",
+        _imageResizeHandleColor: "silver",
 
         mode: "dark",
         primary: {
