@@ -1,6 +1,7 @@
+import { _resolution } from "..";
 import { CanvasToBMP } from "./bmp";
 
-export async function loadProject(dirHandle, setAppImages, pixelPerSecond) {
+export async function loadProject(dirHandle, setAppImages) {
     let programFile = null;
     let imageFiles = [];
     for await (const [name, value] of dirHandle.entries()) {
@@ -18,7 +19,7 @@ export async function loadProject(dirHandle, setAppImages, pixelPerSecond) {
         // Load all images found with the default 6 sec length
         for (let i = 0; i < imageFiles.length; i++) {
             const imageFile = await imageFiles[i].value.getFile();
-            importImage(imageFile, setAppImages, 6 * pixelPerSecond);
+            importImage(imageFile, setAppImages, 6 * _resolution);
         }
     } else {
         // Load only the mentioned images with proper timing
@@ -32,7 +33,7 @@ export async function loadProject(dirHandle, setAppImages, pixelPerSecond) {
                     if (imageFiles[j].name === steps[i - 1].fileName) {
                         const time = parseTimeFormat(steps[i].time);
                         const imageFile = await imageFiles[j].value.getFile();
-                        importImage(imageFile, setAppImages, getSecDifference(lastTime, time) * pixelPerSecond);
+                        importImage(imageFile, setAppImages, getSecDifference(lastTime, time) * _resolution);
                         lastTime = time;
                         break;
                     }
@@ -42,7 +43,7 @@ export async function loadProject(dirHandle, setAppImages, pixelPerSecond) {
     }
 }
 
-export async function saveProject(dirHandle, appImages, pixelPerSecond) {
+export async function saveProject(dirHandle, appImages) {
     // Generate program.txt
     let programFileHandle = await dirHandle.getFileHandle("program.txt", { create: true });
     const fileStream = await programFileHandle.createWritable();
@@ -51,10 +52,10 @@ export async function saveProject(dirHandle, appImages, pixelPerSecond) {
     // TODO: Figure out what is (1.2) at the end of first line
     let programText = `${appImages[0].id} - ${getTimestampFromSecond(currentSec)} (1.2)\r\n`;
     for (let i = 1; i < numImages; i++) {
-        currentSec += appImages[i - 1].width / pixelPerSecond;
+        currentSec += appImages[i - 1].width / _resolution;
         programText += `${appImages[i].id} - ${getTimestampFromSecond(currentSec)}\r\n`;
     }
-    programText += `Finish - ${getTimestampFromSecond(currentSec + appImages[numImages - 1].width / pixelPerSecond)}\r\n`;
+    programText += `Finish - ${getTimestampFromSecond(currentSec + appImages[numImages - 1].width / _resolution)}\r\n`;
     // TODO: Make these configurable
     programText += "Repeat after finish - yes\r\n";
     programText += "Lock buttons - no\r\n";

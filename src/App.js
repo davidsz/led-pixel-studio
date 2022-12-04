@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from "react";
-import { AudioContext } from ".";
+import { AudioContext, _resolution } from ".";
 import Box from "@mui/material/Box";
 import List from "@mui/material/List";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -38,21 +38,18 @@ function App() {
         setCurrentTime(seconds);
     };
 
-    // Calculate timeline resolution (pixel per second)
-    let totalAudioLength = 0,
-        totalAudioPixelLength = 0;
+    // TODO: Implement this in AudioContext
+    let totalAudioLength = 0;
     music.forEach((audio) => {
         totalAudioLength += audio.length;
-        totalAudioPixelLength += audio.waveform ? audio.waveform.length : 0;
     });
-    const resolution = totalAudioLength > 0 ? totalAudioPixelLength / totalAudioLength : 50;
 
     // Determine the currently previewed image
     let t = 0,
         currentImageIndex = -1;
     for (let i = 0; i < images.length; i++) {
         let prevT = t;
-        t += images[i].width / resolution;
+        t += images[i].width / _resolution;
         if (prevT <= currentTime && t > currentTime) {
             currentImageIndex = i;
             break;
@@ -76,7 +73,7 @@ function App() {
                         text={"Load project"}
                         icon={<RestorePageRoundedIcon />}
                         onClick={async () =>
-                            loadProject(await window.showDirectoryPicker({ mode: "read" }), setImages, resolution)
+                            loadProject(await window.showDirectoryPicker({ mode: "read" }), setImages)
                         }
                     />
                     <DrawerMenuitem
@@ -84,7 +81,7 @@ function App() {
                         text={"Save project"}
                         icon={<SaveRoundedIcon />}
                         onClick={async () =>
-                            saveProject(await window.showDirectoryPicker({ mode: "readwrite" }), images, resolution)
+                            saveProject(await window.showDirectoryPicker({ mode: "readwrite" }), images)
                         }
                     />
                     <DrawerMenuitem
@@ -155,7 +152,6 @@ function App() {
 
                 <Timeline
                     seconds={totalAudioLength}
-                    pixelPerSecond={resolution}
                     currentTime={currentTime}
                     onNavigation={handleTimelineNavigation}>
                     <TimelineTrack type="audio" items={music} setItems={setMusic} />

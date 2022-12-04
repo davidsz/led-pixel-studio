@@ -1,7 +1,7 @@
 import { Tooltip } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { useEffect, useId, useContext } from "react";
-import { AudioContext } from "..";
+import { AudioContext, _resolution } from "..";
 import { makeElementDraggable } from "../features/util";
 
 const _cursorWidth = 6;
@@ -46,7 +46,7 @@ const Second = styled("div")(({ theme }) => ({
     pointerEvents: "none",
 }));
 
-function Timeline({ seconds, pixelPerSecond, currentTime, onNavigation, children }) {
+function Timeline({ seconds, currentTime, onNavigation, children }) {
     const audioManager = useContext(AudioContext);
     const cursorId = useId();
 
@@ -64,11 +64,11 @@ function Timeline({ seconds, pixelPerSecond, currentTime, onNavigation, children
                 } else wasPlaying = false;
             },
             doneCallback: (_, left) => {
-                onNavigation(left / pixelPerSecond, true);
+                onNavigation(left / _resolution, true);
                 if (wasPlaying) audioManager.play();
             },
         });
-    }, [pixelPerSecond]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [_resolution]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const handleTimetrackMouseDown = (e) => {
         let rect = e.target.getBoundingClientRect();
@@ -80,9 +80,9 @@ function Timeline({ seconds, pixelPerSecond, currentTime, onNavigation, children
     // Generate time track
     const timeTrackItems = [];
     for (let i = 0; i < seconds; i += 5) {
-        let secondElements = [...Array(4)].map((_, j) => <Second key={i + j} style={{ width: `${pixelPerSecond}px` }} />);
+        let secondElements = [...Array(4)].map((_, j) => <Second key={i + j} style={{ width: `${_resolution}px` }} />);
         let fiveSecondsElement = (
-            <FiveSeconds key={i} style={{ width: `${pixelPerSecond * 5}px` }}>
+            <FiveSeconds key={i} style={{ width: `${_resolution * 5}px` }}>
                 {secondElements}
             </FiveSeconds>
         );
@@ -94,7 +94,7 @@ function Timeline({ seconds, pixelPerSecond, currentTime, onNavigation, children
             <TimeTrack onMouseDown={handleTimetrackMouseDown}>{timeTrackItems}</TimeTrack>
             {children}
             <Tooltip title={Number(currentTime).toFixed(1)} placement="top" open={true} arrow>
-                <Cursor id={`${cursorId}-cursor`} style={{ left: currentTime * pixelPerSecond }} />
+                <Cursor id={`${cursorId}-cursor`} style={{ left: currentTime * _resolution }} />
             </Tooltip>
         </TimelineOuter>
     );

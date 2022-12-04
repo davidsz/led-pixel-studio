@@ -1,7 +1,8 @@
 import WaveformData from "waveform-data";
+import { _audioScale, _sampleRate } from "..";
 
 export function initializeAudio(audioURL, callback) {
-    const audioContext = new AudioContext();
+    const audioContext = new AudioContext({ sampleRate: _sampleRate });
     fetch(audioURL)
         .then((response) => {
             if (response.ok) {
@@ -15,7 +16,7 @@ export function initializeAudio(audioURL, callback) {
             const options = {
                 audio_context: audioContext,
                 audio_buffer: audioBuffer,
-                scale: 1024,
+                scale: _audioScale,
                 // PAIN: The worker somehow wrecks the audioBuffer object, then can't be played later.
                 disable_worker: true,
             };

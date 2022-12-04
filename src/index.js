@@ -1,8 +1,15 @@
 import { createContext } from "react";
 import { createRoot } from "react-dom/client";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import singletonAudioManager from "./features/AudioManager";
+import AudioManager from "./features/AudioManager";
 import App from "./App";
+
+// Audio sample / second
+export const _sampleRate = 44100;
+// Audio sample / pixel
+export const _audioScale = 1024;
+// Timeline resolution (pixel / second)
+export const _resolution = _sampleRate / _audioScale;
 
 const theme = createTheme({
     _drawerWidth: 240,
@@ -29,6 +36,7 @@ const theme = createTheme({
     },
 });
 
+const singletonAudioManager = new AudioManager();
 export const AudioContext = createContext();
 
 const container = document.getElementById("root");
