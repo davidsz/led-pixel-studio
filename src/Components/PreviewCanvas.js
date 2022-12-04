@@ -4,11 +4,13 @@ import { clearCanvas } from "../features/drawing";
 const _canvasViewportSize = 550;
 
 const style = {
-    width: "400px",
-    height: "400px",
+    display: "flex",
     position: "fixed",
-    left: "calc(50% - 200px)",
-    top: "80px",
+    top: "calc(50% - 100px)",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "500px",
+    height: "500px",
 };
 
 function PreviewCanvas({ currentImage, currentTime }) {

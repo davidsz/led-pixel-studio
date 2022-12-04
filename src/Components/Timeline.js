@@ -10,7 +10,7 @@ const TimelineOuter = styled("div")(({ theme }) => ({
     display: "flex",
     flexDirection: "column",
     position: "relative",
-    marginTop: "400px",
+    marginBottom: "50px",
 }));
 
 const Cursor = styled("div")(({ theme }) => ({

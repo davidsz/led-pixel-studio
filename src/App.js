@@ -139,7 +139,17 @@ function App() {
                     <DrawerMenuitem open={drawerOpen} text={"Homepage"} icon={<HomeIcon />} />
                 </List>
             </DrawerMenu>
-            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+            <Box
+                component="main"
+                sx={{
+                    display: "flex",
+                    flexGrow: 1,
+                    p: 3,
+                    height: "100vh",
+                    backgroundColor: "black",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                }}>
                 <DrawerHeader />
 
                 <PreviewCanvas currentImage={currentImage} currentTime={currentTime} />
