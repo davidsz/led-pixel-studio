@@ -135,15 +135,16 @@ function getAvailableId(array) {
 function intToAZ(number) {
     let ret = "";
     do {
-        ret += String.fromCharCode(97 + (number % 25));
-        number -= 25;
-    } while (number > 0);
+        ret += String.fromCharCode(97 + (number % 26));
+        number -= 26;
+    } while (number >= 0);
     return ret;
 }
 
 function idToFilename(id) {
     id = parseInt(id);
-    const fileNameNumber = `${id < 10 ? "0" : ""}${id}`;
+    // Start file names from "01" instead of "00"
+    const fileNameNumber = `${(id + 1) < 10 ? "0" : ""}${id + 1}`;
     return `${fileNameNumber}_${intToAZ(id)}`;
 }
 
