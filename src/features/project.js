@@ -45,15 +45,15 @@ export async function loadProject(dirHandle, setAppImages) {
 
 export async function saveProject(dirHandle, appImages) {
     // Generate program.txt
-    let programFileHandle = await dirHandle.getFileHandle("program.txt", { create: true });
+    const programFileHandle = await dirHandle.getFileHandle("program.txt", { create: true });
     const fileStream = await programFileHandle.createWritable();
     const numImages = appImages.length;
     let currentSec = 0;
     // TODO: Figure out what is (1.2) at the end of first line
-    let programText = `${appImages[0].id} - ${getTimestampFromSecond(currentSec)} (1.2)\r\n`;
+    let programText = `${idToFilename(appImages[0].id)} - ${getTimestampFromSecond(currentSec)} (1.2)\r\n`;
     for (let i = 1; i < numImages; i++) {
         currentSec += appImages[i - 1].width / _resolution;
-        programText += `${appImages[i].id} - ${getTimestampFromSecond(currentSec)}\r\n`;
+        programText += `${idToFilename(appImages[i].id)} - ${getTimestampFromSecond(currentSec)}\r\n`;
     }
     programText += `Finish - ${getTimestampFromSecond(currentSec + appImages[numImages - 1].width / _resolution)}\r\n`;
     // TODO: Make these configurable
@@ -65,7 +65,7 @@ export async function saveProject(dirHandle, appImages) {
     // Generate image files
     for (let i = 0; i < numImages; i++) {
         let image = appImages[i];
-        let imageFileHandle = await dirHandle.getFileHandle(`${image.id}.bmp`, { create: true });
+        let imageFileHandle = await dirHandle.getFileHandle(`${idToFilename(image.id)}.bmp`, { create: true });
         const fileStream = await imageFileHandle.createWritable();
 
         // TODO: Maybe store in another format to avoid the canvas step here?
@@ -130,6 +130,21 @@ function getAvailableId(array) {
         }
     }
     return [id].toString();
+}
+
+function intToAZ(number) {
+    let ret = "";
+    do {
+        ret += String.fromCharCode(97 + (number % 25));
+        number -= 25;
+    } while (number > 0);
+    return ret;
+}
+
+function idToFilename(id) {
+    id = parseInt(id);
+    const fileNameNumber = `${id < 10 ? "0" : ""}${id}`;
+    return `${fileNameNumber}_${intToAZ(id)}`;
 }
 
 function parseTimeFormat(timeString) {
