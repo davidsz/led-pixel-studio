@@ -4,6 +4,8 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import AudioManager from "./features/AudioManager";
 import App from "./App";
 
+// Preview canvas viewport size
+export const _previewSize = 550;
 // Audio sample / second
 export const _sampleRate = 44100;
 // Audio sample / pixel

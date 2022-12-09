@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from "react";
 import { AudioContext } from "..";
-import { IconButton } from "@mui/material";
+import { IconButton, Stack } from "@mui/material";
 import SkipPreviousIcon from "@mui/icons-material/SkipPrevious";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import PauseIcon from "@mui/icons-material/Pause";
@@ -35,7 +35,7 @@ function MediaControls({ musicTrack, onNavigation }) {
     };
 
     return (
-        <>
+        <Stack spacing={2} direction="row" alignItems="center" sx={{ flexGrow: 1 }}>
             <IconButton aria-label="previous" onClick={() => onNavigation(0, true)}>
                 <SkipPreviousIcon />
             </IconButton>
@@ -45,7 +45,7 @@ function MediaControls({ musicTrack, onNavigation }) {
             <IconButton aria-label="next" onClick={() => audioManager.stop()}>
                 <StopIcon />
             </IconButton>
-        </>
+        </Stack>
     );
 }
 

@@ -67,13 +67,7 @@ export async function saveProject(dirHandle, appImages) {
         let image = appImages[i];
         let imageFileHandle = await dirHandle.getFileHandle(`${idToFilename(image.id)}.bmp`, { create: true });
         const fileStream = await imageFileHandle.createWritable();
-
-        // TODO: Maybe store in another format to avoid the canvas step here?
-        const tempCanvas = new OffscreenCanvas(image.imageObj.width, image.imageObj.height);
-        const tempContext = tempCanvas.getContext("2d");
-        tempContext.drawImage(image.imageObj, 0, 0);
-
-        await fileStream.write(CanvasToBMP.toBlob(tempCanvas));
+        await fileStream.write(CanvasToBMP.toBlob(image.imageCanvas));
         await fileStream.close();
     }
 }
@@ -87,7 +81,7 @@ function importImage(image, setAppImages, pixelWidth = 200) {
                 id: id,
                 width: pixelWidth,
                 imageUrl: URL.createObjectURL(image),
-                imageObj: null,
+                imageCanvas: null,
                 circularPreview: null,
             },
         ];

@@ -10,7 +10,6 @@ import DrawerMenu from "./components/DrawerMenu";
 import { DrawerHeader } from "./components/DrawerMenu";
 import TopBar from "./components/TopBar";
 import Timeline from "./components/Timeline";
-import { Stack } from "@mui/material";
 import MediaControls from "./components/MediaControls";
 import PreviewCanvas from "./components/PreviewCanvas";
 import RestorePageRoundedIcon from "@mui/icons-material/RestorePageRounded";
@@ -20,6 +19,7 @@ import ImageRoundedIcon from "@mui/icons-material/ImageRounded";
 import MusicNoteIcon from "@mui/icons-material/MusicNote";
 import HomeIcon from "@mui/icons-material/Home";
 import { importImages, importMusic, loadProject, saveProject } from "./features/project";
+import { FormControl, MenuItem, Select } from "@mui/material";
 
 function App() {
     const audioManager = useContext(AudioContext);
@@ -28,6 +28,7 @@ function App() {
     const [music, setMusic] = useState([]);
     const [images, setImages] = useState([]);
     const [currentTime, setCurrentTime] = useState(0);
+    const [devicePixelCount, setDevicePixelCount] = useState(64);
 
     useEffect(() => {
         document.addEventListener("contextmenu", (event) => event.preventDefault());
@@ -60,9 +61,14 @@ function App() {
         <Box sx={{ display: "flex" }}>
             <CssBaseline />
             <TopBar title="LED Pixel Studio" drawerOpen={drawerOpen} setDrawerOpen={setDrawerOpen}>
-                <Stack spacing={2} direction="row" alignItems="center" sx={{ flexGrow: 1 }}>
-                    <MediaControls musicTrack={music} onNavigation={handleTimelineNavigation} />
-                </Stack>
+                <MediaControls musicTrack={music} onNavigation={handleTimelineNavigation} />
+
+                <FormControl sx={{ m: 1, minWidth: 150 }} disabled={images.length > 0}>
+                    <Select value={devicePixelCount} autoWidth onChange={(e) => setDevicePixelCount(e.target.value)}>
+                        <MenuItem value={36}>36px</MenuItem>
+                        <MenuItem value={64}>64px</MenuItem>
+                    </Select>
+                </FormControl>
             </TopBar>
             <DrawerMenu open={drawerOpen} closeDrawer={() => setDrawerOpen(false)}>
                 <List>
@@ -155,8 +161,8 @@ function App() {
                 <PreviewCanvas currentImage={currentImage} currentTime={currentTime} />
 
                 <Timeline seconds={totalTimelineLength} currentTime={currentTime} onNavigation={handleTimelineNavigation}>
-                    <TimelineTrack type="audio" items={music} setItems={setMusic} />
-                    <TimelineTrack type="image" items={images} setItems={setImages} />
+                    <TimelineTrack type="audio" items={music} setItems={setMusic} pixelCount={devicePixelCount} />
+                    <TimelineTrack type="image" items={images} setItems={setImages} pixelCount={devicePixelCount} />
                 </Timeline>
             </Box>
         </Box>
