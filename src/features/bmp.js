@@ -2,12 +2,13 @@ export var CanvasToBMP = {
     toArrayBuffer: function (canvas) {
         var w = canvas.width,
             h = canvas.height,
-            w4 = w * 4,
+            w3 = w * 3,
             idata = canvas.getContext("2d").getImageData(0, 0, w, h),
             data32 = new Uint32Array(idata.data.buffer), // 32-bit representation of canvas
-            stride = Math.floor((32 * w + 31) / 32) * 4, // row length incl. padding
-            pixelArraySize = stride * h, // total bitmap size
-            fileLength = 122 + pixelArraySize, // header size is known + bitmap
+            extraBytes = w % 4,
+            stride = w3 + extraBytes,
+            pixelArraySize = stride * h,
+            fileLength = 54 + pixelArraySize, // header size is known + bitmap
             file = new ArrayBuffer(fileLength), // raw byte buffer (returned)
             view = new DataView(file), // handle endian, reg. width etc.
             pos = 0,
@@ -15,41 +16,38 @@ export var CanvasToBMP = {
             y = 0,
             p,
             s = 0,
-            a,
             v;
 
         // write file header
         setU16(0x4d42); // BM
         setU32(fileLength); // total length
         pos += 4; // skip unused fields
-        setU32(0x7a); // offset to pixels
+        setU32(0x36); // offset to pixel data
 
         // DIB header
-        setU32(108); // header size
+        setU32(40); // header size
         setU32(w);
-        setU32(-h >>> 0); // negative = top-to-bottom
+        setU32(-h);
         setU16(1); // 1 plane
-        setU16(32); // 32-bits (RGBA)
-        setU32(3); // no compression (BI_BITFIELDS, 3)
-        setU32(pixelArraySize); // bitmap size incl. padding (stride x height)
+        setU16(24); // 24-bits (RGB)
+        setU32(0); // no compression (BI_BITFIELDS, 0)
+        setU32(0); // pixel array size, valid to set 0 if compression == 0
         setU32(2835); // pixels/meter h (~72 DPI x 39.3701 inch/m)
         setU32(2835); // pixels/meter v
         pos += 8; // skip color/important colors
-        setU32(0xff0000); // red channel mask
-        setU32(0xff00); // green channel mask
-        setU32(0xff); // blue channel mask
-        setU32(0xff000000); // alpha channel mask
-        setU32(0x57696e20); // " win" color space
 
         // bitmap data, change order of ABGR to BGRA
         while (y < h) {
-            p = 0x7a + y * stride; // offset + stride x height
+            p = 0x36 + y * stride; // pixel pos = offset + row * stride
             x = 0;
-            while (x < w4) {
+            while (x < w3) {
                 v = data32[s++]; // get ABGR
-                a = v >>> 24; // alpha channel
-                view.setUint32(p + x, (v << 8) | a); // set BGRA
-                x += 4;
+                view.setUint8(p + x, v >>> 16); // B
+                x++;
+                view.setUint8(p + x, v >>> 8); // G
+                x++;
+                view.setUint8(p + x, v); // R
+                x++;
             }
             y++;
         }
