@@ -12,8 +12,6 @@ export var CanvasToBMP = {
             file = new ArrayBuffer(fileLength), // raw byte buffer (returned)
             view = new DataView(file), // handle endian, reg. width etc.
             pos = 0,
-            x,
-            y = 0,
             p,
             s = 0,
             v;
@@ -27,7 +25,7 @@ export var CanvasToBMP = {
         // DIB header
         setU32(40); // header size
         setU32(w);
-        setU32(-h);
+        setU32(h);
         setU16(1); // 1 plane
         setU16(24); // 24-bits (RGB)
         setU32(0); // no compression (BI_BITFIELDS, 0)
@@ -36,12 +34,11 @@ export var CanvasToBMP = {
         setU32(2835); // pixels/meter v
         pos += 8; // skip color/important colors
 
-        // bitmap data, change order of ABGR to BGRA
-        while (y < h) {
+        // bitmap data
+        for (let y = h - 1; y >= 0; y--) {
             p = 0x36 + y * stride; // pixel pos = offset + row * stride
-            x = 0;
-            while (x < w3) {
-                v = data32[s++]; // get ABGR
+            for (let x = 0; x < w3; ) {
+                v = data32[s++]; // get ABGR, remove alpha
                 view.setUint8(p + x, v >>> 16); // B
                 x++;
                 view.setUint8(p + x, v >>> 8); // G
@@ -49,7 +46,6 @@ export var CanvasToBMP = {
                 view.setUint8(p + x, v); // R
                 x++;
             }
-            y++;
         }
 
         return file;
