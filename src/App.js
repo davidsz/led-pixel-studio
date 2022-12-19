@@ -19,7 +19,7 @@ import ImageRoundedIcon from "@mui/icons-material/ImageRounded";
 import MusicNoteIcon from "@mui/icons-material/MusicNote";
 import HomeIcon from "@mui/icons-material/Home";
 import { importImages, importMusic, loadProject, saveProject } from "./features/project";
-import { FormControl, MenuItem, Select } from "@mui/material";
+import { FormControl, MenuItem, Select, Tooltip } from "@mui/material";
 
 function App() {
     const audioManager = useContext(AudioContext);
@@ -63,12 +63,18 @@ function App() {
             <TopBar title="LED Pixel Studio" drawerOpen={drawerOpen} setDrawerOpen={setDrawerOpen}>
                 <MediaControls musicTrack={music} onNavigation={handleTimelineNavigation} />
 
-                <FormControl sx={{ m: 1, minWidth: 150 }} disabled={images.length > 0}>
-                    <Select value={devicePixelCount} autoWidth onChange={(e) => setDevicePixelCount(e.target.value)}>
-                        <MenuItem value={36}>36px</MenuItem>
-                        <MenuItem value={64}>64px</MenuItem>
-                    </Select>
-                </FormControl>
+                <Tooltip
+                    title={`Device pixel resolution${
+                        images.length > 0 ? " can't be modified after images have been added." : ""
+                    }`}
+                    placement="left">
+                    <FormControl sx={{ m: 1, minWidth: 150 }} disabled={images.length > 0}>
+                        <Select value={devicePixelCount} autoWidth onChange={(e) => setDevicePixelCount(e.target.value)}>
+                            <MenuItem value={36}>36px</MenuItem>
+                            <MenuItem value={64}>64px</MenuItem>
+                        </Select>
+                    </FormControl>
+                </Tooltip>
             </TopBar>
             <DrawerMenu open={drawerOpen} closeDrawer={() => setDrawerOpen(false)}>
                 <List>
