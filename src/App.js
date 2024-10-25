@@ -70,8 +70,11 @@ function App() {
                     placement="left">
                     <FormControl sx={{ m: 1, minWidth: 150 }} disabled={images.length > 0}>
                         <Select value={devicePixelCount} autoWidth onChange={(e) => setDevicePixelCount(e.target.value)}>
+                            <MenuItem value={32}>32px</MenuItem>
                             <MenuItem value={36}>36px</MenuItem>
+                            <MenuItem value={44}>44px</MenuItem>
                             <MenuItem value={64}>64px</MenuItem>
+                            <MenuItem value={81}>81px</MenuItem>
                         </Select>
                     </FormControl>
                 </Tooltip>
