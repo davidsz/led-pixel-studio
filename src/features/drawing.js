@@ -56,3 +56,25 @@ export function resizeAsCanvas(image, pixelHeight) {
     canvas.getContext("2d").drawImage(image, 0, 0, newWidth, pixelHeight);
     return canvas;
 }
+
+export function isImageAllBlack(sourceCanvas, tolerance = 5) {
+    const tempCanvas = document.createElement("canvas");
+    tempCanvas.width = sourceCanvas.width;
+    tempCanvas.height = sourceCanvas.height;
+    const ctx = tempCanvas.getContext("2d");
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+    ctx.drawImage(sourceCanvas, 0, 0);
+    const { data } = ctx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+
+    for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+
+        if (r > tolerance || g > tolerance || b > tolerance) {
+            return false;
+        }
+    }
+    return true;
+}

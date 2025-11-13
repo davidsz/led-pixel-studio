@@ -1,5 +1,6 @@
 import { _resolution } from "..";
 import { CanvasToBMP } from "./bmp";
+import { isImageAllBlack } from "./drawing";
 
 export async function loadProject(dirHandle, setAppImages) {
     let programFile = null;
@@ -48,12 +49,33 @@ export async function saveProject(dirHandle, appImages) {
     const programFileHandle = await dirHandle.getFileHandle("program.txt", { create: true });
     const fileStream = await programFileHandle.createWritable();
     const numImages = appImages.length;
+    // We create only one black image to spare disk space
+    // TODO: Create a resource manager and load only one instance of each image
+    let firstBlankImageName = ``;
     let currentSec = 0;
-    // TODO: Figure out what is (1.2) at the end of first line
-    let programText = `${idToFilename(appImages[0].id)} - ${getTimestampFromSecond(currentSec)} (1.2)\r\n`;
-    for (let i = 1; i < numImages; i++) {
-        currentSec += appImages[i - 1].width / _resolution;
-        programText += `${idToFilename(appImages[i].id)} - ${getTimestampFromSecond(currentSec)}\r\n`;
+    let programText = ``;
+    for (let i = 0; i < numImages; i++) {
+        let image = appImages[i];
+        let filename = idToFilename(image.id);
+        // Create BMP image
+        if (isImageAllBlack(image.imageCanvas)) {
+            if (firstBlankImageName === ``) {
+                firstBlankImageName = filename;
+                saveImage(dirHandle, filename, image.imageCanvas);
+            } else
+                filename = firstBlankImageName;
+        } else
+            saveImage(dirHandle, filename, image.imageCanvas);
+
+        // Write the corresponding line into program.txt
+        if (i === 0) {
+            currentSec = 0;
+            // TODO: Figure out what is (1.2) at the end of first line
+            programText = `${filename} - ${getTimestampFromSecond(currentSec)} (1.2)\r\n`;
+        } else {
+            currentSec += appImages[i - 1].width / _resolution;
+            programText += `${filename} - ${getTimestampFromSecond(currentSec)}\r\n`;
+        }
     }
     programText += `Finish - ${getTimestampFromSecond(currentSec + appImages[numImages - 1].width / _resolution)}\r\n`;
     // TODO: Make these configurable
@@ -61,15 +83,6 @@ export async function saveProject(dirHandle, appImages) {
     programText += "Lock buttons - no\r\n";
     await fileStream.write(new Blob([programText], { type: "text/plain" }));
     await fileStream.close();
-
-    // Generate image files
-    for (let i = 0; i < numImages; i++) {
-        let image = appImages[i];
-        let imageFileHandle = await dirHandle.getFileHandle(`${idToFilename(image.id)}.bmp`, { create: true });
-        const fileStream = await imageFileHandle.createWritable();
-        await fileStream.write(CanvasToBMP.toBlob(image.imageCanvas));
-        await fileStream.close();
-    }
 }
 
 function importImage(image, setAppImages, pixelWidth = 200) {
@@ -197,4 +210,11 @@ function parseProgramFile(file) {
         }
         return ret;
     });
+}
+
+async function saveImage(dirHandle, filename, imageCanvas) {
+    let imageFileHandle = await dirHandle.getFileHandle(`${filename}.bmp`, { create: true });
+    const fileStream = await imageFileHandle.createWritable();
+    await fileStream.write(CanvasToBMP.toBlob(imageCanvas));
+    await fileStream.close();
 }
